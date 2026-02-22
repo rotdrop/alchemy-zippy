@@ -44,7 +44,7 @@ abstract class BSDTarAdapterWithOptionsTestBase extends AdapterTestCase
 
         $inflator = $this->getMockBuilder('\Alchemy\Zippy\ProcessBuilder\ProcessBuilderFactory')
                 ->disableOriginalConstructor()
-                ->setMethods(array('useBinary'))
+                ->onlyMethods(array('useBinary'))
                 ->getMock();
 
         $outputParser = ParserFactory::create($classname::getName());

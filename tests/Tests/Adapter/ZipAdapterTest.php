@@ -41,7 +41,7 @@ final class ZipAdapterTest extends AdapterTestCase
     {
         $inflator = $deflator = $this->getMockBuilder('\Alchemy\Zippy\ProcessBuilder\ProcessBuilderFactory')
                                     ->disableOriginalConstructor()
-                                    ->setMethods(array('useBinary'))
+                                    ->onlyMethods(array('useBinary'))
                                     ->getMock();
 
         $outputParser = ParserFactory::create(ZipAdapter::getName());
@@ -56,7 +56,7 @@ final class ZipAdapterTest extends AdapterTestCase
     {
         $inflator = $deflator = $this->getMockBuilder('\Alchemy\Zippy\ProcessBuilder\ProcessBuilderFactory')
                                     ->disableOriginalConstructor()
-                                    ->setMethods(array('useBinary'))
+                                    ->onlyMethods(array('useBinary'))
                                     ->getMock();
 
         $outputParser = ParserFactory::create(ZipAdapter::getName());
@@ -111,7 +111,7 @@ final class ZipAdapterTest extends AdapterTestCase
         $outputParser = ParserFactory::create(ZipAdapter::getName());
         $deflator = $this->getMockBuilder('\Alchemy\Zippy\ProcessBuilder\ProcessBuilderFactory')
                                     ->disableOriginalConstructor()
-                                    ->setMethods(array('useBinary'))
+                                    ->onlyMethods(array('useBinary'))
                                     ->getMock();
 
         $this->adapter = new ZipAdapter($outputParser, $manager, $this->getMockedProcessBuilderFactory($mockedProcessBuilder), $deflator);

@@ -42,7 +42,7 @@ final class TarBSDTarAdapterTest extends AdapterTestCase
     {
         $inflator = $this->getMockBuilder('\Alchemy\Zippy\ProcessBuilder\ProcessBuilderFactory')
                 ->disableOriginalConstructor()
-                ->setMethods(array('useBinary'))
+                ->onlyMethods(array('useBinary'))
                 ->getMock();
 
         $outputParser = ParserFactory::create(TarBSDTarAdapter::getName());
