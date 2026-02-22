@@ -10,12 +10,20 @@ use Alchemy\Zippy\Resource\TeleporterContainer;
 #[\PHPUnit\Framework\Attributes\CoversMethod(\Alchemy\Zippy\Resource\TeleporterContainer::class, 'fromResource')]
 final class TeleporterContainerTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideResourceData')]
-    public function testFromResource($resource, $classname)
+    public function setup(): void
+    {
+        self::$resource = $this->createMock('\Alchemy\Zippy\Resource\Resource');
+    }
+
+    // _AT_[\PHPUnit\Framework\Attributes\DataProvider('provideResourceData')]
+    public function testFromResource()
     {
         $container = TeleporterContainer::load();
 
-        $this->assertInstanceOf($classname, $container->fromResource($resource));
+        foreach ($this->provideResourceData() as $data) {
+            [$resource, $classname] = $data;
+            $this->assertInstanceOf($classname, $container->fromResource($resource));
+        }
     }
     /**
      * @expectedException \Alchemy\Zippy\Exception\InvalidArgumentException
@@ -34,7 +42,7 @@ final class TeleporterContainerTest extends TestCase
         yield array($this->createResource('http://127.0.0.1:8080/plus-badge.png'), 'Alchemy\Zippy\Resource\Teleporter\GenericTeleporter');
     }
 
-    private function createResource($data)
+    private static function createResource($data)
     {
         $resource = $this->createMock('\Alchemy\Zippy\Resource\Resource');
 

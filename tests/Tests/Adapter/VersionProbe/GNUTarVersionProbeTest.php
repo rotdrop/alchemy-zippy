@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace Alchemy\Zippy\Tests\Adapter\VersionProbe;
 
-final class GNUTarVersionProbeTest extends AbstractTarVersionProbeTest
+final class GNUTarVersionProbeTest extends AbstractTarVersionProbeTestBase
 {
-    public function getProbeClassName()
+    public static function getProbeClassName()
     {
         return 'Alchemy\Zippy\Adapter\VersionProbe\GNUTarVersionProbe';
     }
 
-    public function getCorrespondingVersionOutput()
+    public static function getCorrespondingVersionOutput()
     {
-        return $this->getGNUTarVersionOutput();
+        return self::getGNUTarVersionOutput();
     }
 
-    public function getNonCorrespondingVersionOutput()
+    public static function getNonCorrespondingVersionOutput()
     {
-        return $this->getBSDTarVersionOutput();
+        return self::getBSDTarVersionOutput();
     }
 }

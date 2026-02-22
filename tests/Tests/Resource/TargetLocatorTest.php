@@ -43,7 +43,7 @@ final class TargetLocatorTest extends TestCase
         $locator->locate(__DIR__, __DIR__ . '/input/path/to/a/../local/file-non-existent.ext');
     }
 
-    public function provideLocationData(): \Iterator
+    public static function provideLocationData(): \Iterator
     {
         $updir = dirname(__DIR__) . '/';
         yield array(basename(__FILE__), __DIR__, __FILE__);

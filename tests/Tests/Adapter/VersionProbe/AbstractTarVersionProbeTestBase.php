@@ -8,14 +8,14 @@ use Alchemy\Zippy\Tests\TestCase;
 use Alchemy\Zippy\Adapter\VersionProbe\BSDTarVersionProbe;
 use Alchemy\Zippy\Adapter\VersionProbe\VersionProbeInterface;
 
-abstract class AbstractTarVersionProbeTest extends TestCase
+abstract class AbstractTarVersionProbeTestBase extends TestCase
 {
     public function testGetStatusIsOk()
     {
-        $mockInflator = $this->getBuilder($this->getCorrespondingVersionOutput());
-        $mockDeflator = $this->getBuilder($this->getCorrespondingVersionOutput());
+        $mockInflator = $this->getBuilder(static::getCorrespondingVersionOutput());
+        $mockDeflator = $this->getBuilder(static::getCorrespondingVersionOutput());
 
-        $classname = $this->getProbeClassName();
+        $classname = static::getProbeClassName();
 
         $probe = new $classname($this->getMockedProcessBuilderFactory($mockInflator), $this->getMockedProcessBuilderFactory($mockDeflator));
 
@@ -33,7 +33,7 @@ abstract class AbstractTarVersionProbeTest extends TestCase
         $builderInflator = $mockInflatorBuilder ? $this->getMockedProcessBuilderFactory($mockInflatorBuilder, $inflatorCall ? 1 : 0) : null;
         $builderDeflator = $mockDeflatorBuilder ? $this->getMockedProcessBuilderFactory($mockDeflatorBuilder, $deflatorCall ? 1 : 0) : null;
 
-        $classname = $this->getProbeClassName();
+        $classname = static::getProbeClassName();
 
         $probe = new $classname($builderInflator, $builderDeflator);
 
@@ -42,10 +42,10 @@ abstract class AbstractTarVersionProbeTest extends TestCase
         $this->assertEquals(VersionProbeInterface::PROBE_NOTSUPPORTED, $probe->getStatus());
     }
 
-    public function provideInvalidVersions(): \Iterator
+    public static function provideInvalidVersions(): \Iterator
     {
-        yield array($this->getCorrespondingVersionOutput(), $this->getNonCorrespondingVersionOutput(), true, true);
-        yield array($this->getNonCorrespondingVersionOutput(), $this->getCorrespondingVersionOutput(), true, false);
+        yield array(static::getCorrespondingVersionOutput(), static::getNonCorrespondingVersionOutput(), true, true);
+        yield array(static::getNonCorrespondingVersionOutput(), static::getCorrespondingVersionOutput(), true, false);
     }
 
     protected function getBuilder($version, $call = true)
@@ -75,12 +75,12 @@ abstract class AbstractTarVersionProbeTest extends TestCase
         return $mock;
     }
 
-    protected function getBSDTarVersionOutput()
+    protected static function getBSDTarVersionOutput()
     {
         return 'bsdtar 2.8.3 - libarchive 2.8.3';
     }
 
-    protected function getGNUTarVersionOutput()
+    protected static function getGNUTarVersionOutput()
     {
         return 'tar (GNU tar) 1.17
 Copyright (C) 2007 Free Software Foundation, Inc.
@@ -92,7 +92,7 @@ Modified to support extended attributes.
 Written by John Gilmore and Jay Fenlason.';
     }
 
-    abstract public function getProbeClassName();
-    abstract public function getCorrespondingVersionOutput();
-    abstract public function getNonCorrespondingVersionOutput();
+    abstract public static function getProbeClassName();
+    abstract public static function getCorrespondingVersionOutput();
+    abstract public static function getNonCorrespondingVersionOutput();
 }

@@ -59,7 +59,7 @@ final class LocalTeleporterTest extends TeleporterTestCase
         $teleporter->teleport($resource, __DIR__);
     }
 
-    public function provideInvalidSources(): \Iterator
+    public static function provideInvalidSources(): \Iterator
     {
         yield array('file://path/to/nonexistent/file');
         yield array('/path/to/nonexistent/file');

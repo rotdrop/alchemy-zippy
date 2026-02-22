@@ -39,7 +39,7 @@ final class ResourceTest extends TestCase
         $this->assertEquals('/path/to', $resource->getContextForProcessInSinglePlace());
     }
 
-    public function provideProcessInPlaceData(): \Iterator
+    public static function provideProcessInPlaceData(): \Iterator
     {
         yield array(true, '/path/to', '/path/to/file1', 'file1');
         yield array(true, __DIR__, __FILE__, basename(__FILE__));

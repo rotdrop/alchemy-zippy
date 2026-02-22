@@ -15,7 +15,7 @@ final class ZipOutputParserTest extends TestCase
         return new ZipOutputParser();
     }
 
-    public function getDatasets(): \Iterator
+    public static function getDatasets(): \Iterator
     {
         $standardOutput =
             "Length   Date     Time     Name

@@ -7,7 +7,7 @@ namespace Alchemy\Zippy\Tests\Adapter\GNUTar;
 use Alchemy\Zippy\Tests\Adapter\AdapterTestCase;
 use Alchemy\Zippy\Parser\ParserFactory;
 
-abstract class GNUTarAdapterWithOptionsTest extends AdapterTestCase
+abstract class GNUTarAdapterWithOptionsTestBase extends AdapterTestCase
 {
     protected static $tarFile;
 

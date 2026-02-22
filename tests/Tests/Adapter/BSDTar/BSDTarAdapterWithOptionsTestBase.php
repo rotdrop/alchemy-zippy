@@ -7,7 +7,7 @@ namespace Alchemy\Zippy\Tests\Adapter\BSDTar;
 use Alchemy\Zippy\Tests\Adapter\AdapterTestCase;
 use Alchemy\Zippy\Parser\ParserFactory;
 
-abstract class BSDTarAdapterWithOptionsTest extends AdapterTestCase
+abstract class BSDTarAdapterWithOptionsTestBase extends AdapterTestCase
 {
     protected static $tarFile;
 

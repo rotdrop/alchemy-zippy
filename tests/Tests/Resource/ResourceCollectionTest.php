@@ -42,7 +42,7 @@ final class ResourceCollectionTest extends TestCase
         $this->assertEquals($expected, $collection->canBeProcessedInPlace());
     }
 
-    public function provideVariousInPlaceResources(): \Iterator
+    public static function provideVariousInPlaceResources(): \Iterator
     {
         yield array(true, true, true, true);
         yield array(false, true, true, false);

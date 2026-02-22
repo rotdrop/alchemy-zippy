@@ -15,7 +15,7 @@ final class PathUtilTest extends TestCase
         $this->assertEquals($expected, PathUtil::basename($context));
     }
 
-    public function providePathData(): \Iterator
+    public static function providePathData(): \Iterator
     {
         yield array('file.ext', 'input/path/to/local/file.ext');
         yield array('file.ext', 'input\path\to\local\file.ext');

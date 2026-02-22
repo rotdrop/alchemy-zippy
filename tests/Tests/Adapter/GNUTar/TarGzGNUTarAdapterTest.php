@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Alchemy\Zippy\Tests\Adapter\GNUTar;
 
-final class TarGzGNUTarAdapterTest extends GNUTarAdapterWithOptionsTest
+final class TarGzGNUTarAdapterTest extends GNUTarAdapterWithOptionsTestBase
 {
     protected function getOptions()
     {

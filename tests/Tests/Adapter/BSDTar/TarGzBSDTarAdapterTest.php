@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Alchemy\Zippy\Tests\Adapter\BSDTar;
 
-final class TarGzBSDTarAdapterTest extends BSDTarAdapterWithOptionsTest
+final class TarGzBSDTarAdapterTest extends BSDTarAdapterWithOptionsTestBase
 {
     protected function getOptions()
     {
