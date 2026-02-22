@@ -25,7 +25,7 @@ final class ZipAdapterTest extends AdapterTestCase
         }
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         if (file_exists(self::$zipFile)) {
             unlink(self::$zipFile);
