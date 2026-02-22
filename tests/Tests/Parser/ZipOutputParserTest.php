@@ -1,21 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Alchemy\Zippy\Tests\Parser;
 
 use Alchemy\Zippy\Parser\ZipOutputParser;
 use Alchemy\Zippy\Tests\TestCase;
 
-class ZipOutputParserTest extends TestCase
+final class ZipOutputParserTest extends TestCase
 {
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testNewParser()
+    #[\PHPUnit\Framework\Attributes\DoesNotPerformAssertions]
+    public function testNewParser(): \Alchemy\Zippy\Parser\ZipOutputParser
     {
         return new ZipOutputParser();
     }
 
-    public function getDatasets()
+    public function getDatasets(): \Iterator
     {
         $standardOutput =
             "Length   Date     Time     Name
@@ -32,16 +32,11 @@ class ZipOutputParserTest extends TestCase
  10240   09-06-06 12:06  practice/records
 --------                    -------
     785                      2 files";
-
-        return array(
-            array(new ZipOutputParser(), $standardOutput),
-            array(new ZipOutputParser('d-m-y H:i'), $altOutput)
-        );
+        yield array(new ZipOutputParser(), $standardOutput);
+        yield array(new ZipOutputParser('d-m-y H:i'), $altOutput);
     }
 
-    /**
-     * @dataProvider getDatasets
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getDatasets')]
     public function testParseFileListing($parser, $output)
     {
         $current_timezone = ini_get('date.timezone');
@@ -49,7 +44,7 @@ class ZipOutputParserTest extends TestCase
 
         $members = $parser->parseFileListing($output);
 
-        $this->assertEquals(2, count($members));
+        $this->assertCount(2, $members);
 
         foreach ($members as $member) {
             $this->assertTrue(is_array($member));
@@ -61,7 +56,7 @@ class ZipOutputParserTest extends TestCase
         $this->assertEquals('practice/', $memberDirectory['location']);
         $this->assertEquals(0, $memberDirectory['size']);
         $date = $memberDirectory['mtime'];
-        $this->assertTrue($date instanceof \DateTime);
+        $this->assertInstanceOf(\DateTime::class, $date);
         $this->assertEquals('1149854760', $date->format("U"));
 
         $memberFile = array_pop($members);
@@ -70,15 +65,13 @@ class ZipOutputParserTest extends TestCase
         $this->assertEquals('practice/records', $memberFile['location']);
         $this->assertEquals(10240, $memberFile['size']);
         $date = $memberFile['mtime'];
-        $this->assertTrue($date instanceof \DateTime);
+        $this->assertInstanceOf(\DateTime::class, $date);
         $this->assertEquals('1149854760', $date->format("U"));
 
         ini_set('date.timezone', $current_timezone);
     }
 
-    /**
-     * @depends testNewParser
-     */
+    #[\PHPUnit\Framework\Attributes\Depends('testNewParser')]
     public function testParseDeflatorVersion($parser)
     {
         $output = "UnZip 5.52 of 28 February 2005, by Info-ZIP.  Maintained by C. Spieler.  Send
@@ -108,9 +101,7 @@ Examples (see unzip.txt for more info):
         $this->assertEquals('5.52', $parser->parseDeflatorVersion($output));
     }
 
-    /**
-     * @depends testNewParser
-     */
+    #[\PHPUnit\Framework\Attributes\Depends('testNewParser')]
     public function testParseInflatorVersion($parser)
     {
         $output = "Copyright (c) 1990-2008 Info-ZIP - Type 'zip '-L'' for software license.

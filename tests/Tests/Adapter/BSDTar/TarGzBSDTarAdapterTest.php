@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Alchemy\Zippy\Tests\Adapter\BSDTar;
 
-class TarGzBSDTarAdapterTest extends BSDTarAdapterWithOptionsTest
+final class TarGzBSDTarAdapterTest extends BSDTarAdapterWithOptionsTest
 {
     protected function getOptions()
     {

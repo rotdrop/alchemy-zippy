@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Alchemy\Zippy\Tests\Adapter\VersionProbe;
 
 use Alchemy\Zippy\Tests\TestCase;
@@ -8,9 +10,6 @@ use Alchemy\Zippy\Adapter\VersionProbe\VersionProbeInterface;
 
 abstract class AbstractTarVersionProbeTest extends TestCase
 {
-    /**
-     * @covers Alchemy\Zippy\Adapter\VersionProbe\BSDTarVersionProbe::getStatus
-     */
     public function testGetStatusIsOk()
     {
         $mockInflator = $this->getBuilder($this->getCorrespondingVersionOutput());
@@ -25,10 +24,7 @@ abstract class AbstractTarVersionProbeTest extends TestCase
         $this->assertEquals(VersionProbeInterface::PROBE_OK, $probe->getStatus());
     }
 
-    /**
-     * @dataProvider provideInvalidVersions
-     * @covers Alchemy\Zippy\Adapter\VersionProbe\BSDTarVersionProbe::getStatus
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideInvalidVersions')]
     public function testGetStatusIsNotOk($inflatorVersion, $deflatorVersion, $inflatorCall, $deflatorCall)
     {
         $mockInflatorBuilder = $inflatorVersion ? $this->getBuilder($inflatorVersion, $inflatorCall) : null;
@@ -46,19 +42,15 @@ abstract class AbstractTarVersionProbeTest extends TestCase
         $this->assertEquals(VersionProbeInterface::PROBE_NOTSUPPORTED, $probe->getStatus());
     }
 
-    public function provideInvalidVersions()
+    public function provideInvalidVersions(): \Iterator
     {
-        return array(
-            array($this->getCorrespondingVersionOutput(), $this->getNonCorrespondingVersionOutput(), true, true),
-            array($this->getNonCorrespondingVersionOutput(), $this->getCorrespondingVersionOutput(), true, false),
-        );
+        yield array($this->getCorrespondingVersionOutput(), $this->getNonCorrespondingVersionOutput(), true, true);
+        yield array($this->getNonCorrespondingVersionOutput(), $this->getCorrespondingVersionOutput(), true, false);
     }
 
     protected function getBuilder($version, $call = true)
     {
-        $mock = $this->getMockBuilder('\Alchemy\Zippy\ProcessBuilder\ProcessBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mock = $this->createMock('\Alchemy\Zippy\ProcessBuilder\ProcessBuilder');
 
         $mockBuilder = $mock
             ->expects($call ? $this->once() : $this->never())
@@ -66,19 +58,19 @@ abstract class AbstractTarVersionProbeTest extends TestCase
         if ($call) {
             $mockBuilder->with('--version');
         }
-        $mockBuilder->will($this->returnSelf());
+        $mockBuilder->willReturnSelf();
 
         $process = $this->getSuccessFullMockProcess($call ? 1 : 0);
 
         $mock
             ->expects($call ? $this->once() : $this->never())
             ->method('getProcess')
-            ->will($this->returnValue($process));
+            ->willReturn($process);
 
         $process
             ->expects($call ? $this->once() : $this->never())
             ->method('getOutput')
-            ->will($this->returnValue($version));
+            ->willReturn($version);
 
         return $mock;
     }

@@ -1,15 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Alchemy\Zippy\Tests\Resource;
 
 use Alchemy\Zippy\Tests\TestCase;
 use Alchemy\Zippy\Resource\ResourceCollection;
 
-class ResourceCollectionTest extends TestCase
+final class ResourceCollectionTest extends TestCase
 {
-    /**
-     * @covers Alchemy\Zippy\Resource\ResourceCollection::__construct
-     */
     public function testConstructWithoutElements()
     {
         $collection = new ResourceCollection('supa-context', array(), false);
@@ -17,9 +16,6 @@ class ResourceCollectionTest extends TestCase
         $this->assertEquals(array(), $collection->toArray());
     }
 
-    /**
-     * @covers Alchemy\Zippy\Resource\ResourceCollection::__construct
-     */
     public function testConstructWithElements()
     {
         $data = array($this->createResourceMock(), 'two' => $this->createResourceMock());
@@ -30,15 +26,10 @@ class ResourceCollectionTest extends TestCase
 
     private function createResourceMock()
     {
-        return $this->getMockBuilder('\Alchemy\Zippy\Resource\Resource')
-            ->disableOriginalConstructor()
-            ->getMock();
+        return $this->createMock('\Alchemy\Zippy\Resource\Resource');
     }
 
-    /**
-     * @covers Alchemy\Zippy\Resource\ResourceCollection::canBeProcessedInPlace
-     * @dataProvider provideVariousInPlaceResources
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideVariousInPlaceResources')]
     public function testCanBeProcessedInPlace($expected, $first, $second, $third)
     {
         $collection = new ResourceCollection('supa-context', array(
@@ -51,25 +42,21 @@ class ResourceCollectionTest extends TestCase
         $this->assertEquals($expected, $collection->canBeProcessedInPlace());
     }
 
-    public function provideVariousInPlaceResources()
+    public function provideVariousInPlaceResources(): \Iterator
     {
-        return array(
-            array(true, true, true, true),
-            array(false, true, true, false),
-            array(false, false, false, false),
-            array(false, false, false, true),
-        );
+        yield array(true, true, true, true);
+        yield array(false, true, true, false);
+        yield array(false, false, false, false);
+        yield array(false, false, false, true);
     }
 
     private function getInPlaceResource($processInPlace)
     {
-        $resource = $this->getMockBuilder('\Alchemy\Zippy\Resource\Resource')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resource = $this->createMock('\Alchemy\Zippy\Resource\Resource');
 
-        $resource->expects($this->any())
+        $resource
             ->method('canBeProcessedInPlace')
-            ->will($this->returnValue($processInPlace));
+            ->willReturn($processInPlace);
 
         return $resource;
     }

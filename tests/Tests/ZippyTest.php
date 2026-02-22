@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Alchemy\Zippy\Tests;
 
 use Alchemy\Zippy\Zippy;
@@ -7,10 +9,9 @@ use Alchemy\Zippy\Exception\NoAdapterOnPlatformException;
 use Alchemy\Zippy\Exception\FormatNotSupportedException;
 use Alchemy\Zippy\Exception\RuntimeException;
 
-class ZippyTest extends TestCase
+final class ZippyTest extends TestCase
 {
-    /** @test */
-    public function itShouldCreateAnArchive()
+    public function testItShouldCreateAnArchive()
     {
         $filename = 'file.zippo';
         $fileToAdd = 'file1';
@@ -20,7 +21,7 @@ class ZippyTest extends TestCase
 
         $adapter->expects($this->once())
             ->method('create')
-            ->with($this->equalTo($filename), $this->equalTo($fileToAdd), $this->equalTo($recursive));
+            ->with($filename, $fileToAdd, $recursive);
 
         $adapters = array($adapter);
         $strategy = $this->getStrategy('zippo', $adapters);
@@ -31,8 +32,7 @@ class ZippyTest extends TestCase
         $zippy->create($filename, $fileToAdd, $recursive);
     }
 
-    /** @test */
-    public function itShouldCreateAnArchiveByForcingType()
+    public function testItShouldCreateAnArchiveByForcingType()
     {
         $filename = 'file';
         $fileToAdd = 'file1';
@@ -42,7 +42,7 @@ class ZippyTest extends TestCase
 
         $adapter->expects($this->once())
             ->method('create')
-            ->with($this->equalTo($filename), $this->equalTo($fileToAdd), $this->equalTo($recursive));
+            ->with($filename, $fileToAdd, $recursive);
 
         $adapters = array($adapter);
         $strategy = $this->getStrategy('zippo', $adapters);
@@ -53,8 +53,7 @@ class ZippyTest extends TestCase
         $zippy->create($filename, $fileToAdd, $recursive, 'zippo');
     }
 
-    /** @test */
-    public function itShouldNotCreateAndThrowAnException()
+    public function testItShouldNotCreateAndThrowAnException()
     {
         $filename = 'file';
         $fileToAdd = 'file1';
@@ -78,8 +77,7 @@ class ZippyTest extends TestCase
         }
     }
 
-    /** @test */
-    public function itShouldOpenAnArchive()
+    public function testItShouldOpenAnArchive()
     {
         $filename = 'file.zippo';
 
@@ -87,7 +85,7 @@ class ZippyTest extends TestCase
 
         $adapter->expects($this->once())
             ->method('open')
-            ->with($this->equalTo($filename));
+            ->with($filename);
 
         $adapters = array($adapter);
         $strategy = $this->getStrategy('zippo', $adapters);
@@ -98,8 +96,7 @@ class ZippyTest extends TestCase
         $zippy->open($filename);
     }
 
-    /** @test */
-    public function itShouldExposeContainerPassedOnConstructor()
+    public function testItShouldExposeContainerPassedOnConstructor()
     {
         $container = $this->getContainer();
 
@@ -108,8 +105,7 @@ class ZippyTest extends TestCase
         $this->assertEquals($container, $zippy->adapters);
     }
 
-    /** @test */
-    public function itShouldRegisterStrategies()
+    public function testItShouldRegisterStrategies()
     {
         $adapters = array($this->getSupportedAdapter());
         $strategy = $this->getStrategy('zippo', $adapters);
@@ -120,8 +116,7 @@ class ZippyTest extends TestCase
         $this->assertEquals(array('zippo' => array($strategy)), $zippy->getStrategies());
     }
 
-    /** @test */
-    public function registerTwoStrategiesWithSameExtensionShouldBeinRightOrder()
+    public function testRegisterTwoStrategiesWithSameExtensionShouldBeinRightOrder()
     {
         $adapters1 = array($this->getSupportedAdapter());
         $strategy1 = $this->getStrategy('zippo', $adapters1);
@@ -136,8 +131,7 @@ class ZippyTest extends TestCase
         $this->assertEquals(array('zippo' => array($strategy2, $strategy1)), $zippy->getStrategies());
     }
 
-    /** @test */
-    public function registerAStrategyTwiceShouldMoveItToLastAdded()
+    public function testRegisterAStrategyTwiceShouldMoveItToLastAdded()
     {
         $adapters1 = array($this->getSupportedAdapter());
         $strategy1 = $this->getStrategy('zippo', $adapters1);
@@ -153,8 +147,7 @@ class ZippyTest extends TestCase
         $this->assertEquals(array('zippo' => array($strategy1, $strategy2)), $zippy->getStrategies());
     }
 
-    /** @test */
-    public function itShouldReturnAnAdapterCorrespondingToTheRightStrategy()
+    public function testItShouldReturnAnAdapterCorrespondingToTheRightStrategy()
     {
         $adapters = array($this->getSupportedAdapter());
         $strategy = $this->getStrategy('zippo', $adapters);
@@ -168,8 +161,7 @@ class ZippyTest extends TestCase
         $this->assertEquals($adapters[0], $zippy->getAdapterFor('.ZIPPO'));
     }
 
-    /** @test */
-    public function itShouldThrowAnExceptionIfNoAdapterSupported()
+    public function testItShouldThrowAnExceptionIfNoAdapterSupported()
     {
         $adapters = array($this->getNotSupportedAdapter());
         $strategy = $this->getStrategy('zippo', $adapters);
@@ -177,14 +169,13 @@ class ZippyTest extends TestCase
         $zippy = new Zippy($this->getContainer());
         $zippy->addStrategy($strategy);
 
-        self::expectException(NoAdapterOnPlatformException::class);
+        $this->expectException(NoAdapterOnPlatformException::class);
         $zippy->getAdapterFor('zippo');
 
         $this->fail('Should have raised an exception');
     }
 
-    /** @test */
-    public function itShouldThrowAnExceptionIfFormatNotSupported()
+    public function testItShouldThrowAnExceptionIfFormatNotSupported()
     {
         $adapters = array($this->getSupportedAdapter());
         $strategy = $this->getStrategy('zippotte', $adapters);
@@ -192,14 +183,13 @@ class ZippyTest extends TestCase
         $zippy = new Zippy($this->getContainer());
         $zippy->addStrategy($strategy);
 
-        self::expectException(FormatNotSupportedException::class);
+        $this->expectException(FormatNotSupportedException::class);
         $zippy->getAdapterFor('zippo');
 
         $this->fail('Should have raised an exception');
     }
 
-    /** @test */
-    public function loadShouldRegisterStrategies()
+    public function testLoadShouldRegisterStrategies()
     {
         $zippy = Zippy::load();
 
@@ -216,41 +206,41 @@ class ZippyTest extends TestCase
 
     private function getStrategy($extension, $adapters)
     {
-        $strategy = $this->getMockBuilder('\Alchemy\Zippy\FileStrategy\FileStrategyInterface')->getMock();
+        $strategy = $this->createMock('\Alchemy\Zippy\FileStrategy\FileStrategyInterface');
 
-        $strategy->expects($this->any())
+        $strategy
             ->method('getFileExtension')
-            ->will($this->returnValue($extension));
+            ->willReturn($extension);
 
-        $strategy->expects($this->any())
+        $strategy
             ->method('getAdapters')
-            ->will($this->returnValue($adapters));
+            ->willReturn($adapters);
 
         return $strategy;
     }
 
     private function getSupportedAdapter()
     {
-        $adapter = $this->getMockBuilder('\Alchemy\Zippy\Adapter\AdapterInterface')->getMock();
-        $adapter->expects($this->any())
+        $adapter = $this->createMock('\Alchemy\Zippy\Adapter\AdapterInterface');
+        $adapter
             ->method('isSupported')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         return $adapter;
     }
 
     private function getNotSupportedAdapter()
     {
-        $adapter = $this->getMockBuilder('\Alchemy\Zippy\Adapter\AdapterInterface')->getMock();
-        $adapter->expects($this->any())
+        $adapter = $this->createMock('\Alchemy\Zippy\Adapter\AdapterInterface');
+        $adapter
             ->method('isSupported')
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         return $adapter;
     }
 
     private function getContainer()
     {
-        return $this->getMockBuilder('\Alchemy\Zippy\Adapter\AdapterContainer')->getMock();
+        return $this->createMock('\Alchemy\Zippy\Adapter\AdapterContainer');
     }
 }

@@ -1,14 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Alchemy\Zippy\Tests\Adapter;
 
 use Alchemy\Zippy\Tests\TestCase;
 use Alchemy\Zippy\Adapter\AdapterContainer;
 
-class AdapterContainerTest extends TestCase
+final class AdapterContainerTest extends TestCase
 {
-    /** @test */
-    public function itShouldRegisterAdaptersOnload()
+    public function testItShouldRegisterAdaptersOnload()
     {
         $container = AdapterContainer::load();
 

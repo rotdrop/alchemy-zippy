@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Alchemy\Zippy\Functional;
 
 use Symfony\Component\Finder\Finder;
 
-class Add2ArchiveTest extends FunctionalTestCase
+final class Add2ArchiveTest extends FunctionalTestCase
 {
     private static $file;
 
@@ -75,12 +77,12 @@ class Add2ArchiveTest extends FunctionalTestCase
         );
 
         foreach ($finder as $file) {
-            $this->assertEquals(0, strpos($file->getPathname(), $target));
+            $this->assertSame(0, strpos($file->getPathname(), $target));
             $member = substr($file->getPathname(), strlen($target));
             $this->assertContains($member, $files2find, "looking for $member in files2find");
             unset($files2find[array_search($member, $files2find)]);
         }
 
-        $this->assertEquals(array(), $files2find);
+        $this->assertSame(array(), $files2find);
     }
 }

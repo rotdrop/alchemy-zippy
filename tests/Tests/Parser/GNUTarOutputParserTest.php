@@ -1,23 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Alchemy\Zippy\Tests\Parser;
 
 use Alchemy\Zippy\Parser\GNUTarOutputParser;
 use Alchemy\Zippy\Tests\TestCase;
 
-class GNUTarOutputParserTest extends TestCase
+final class GNUTarOutputParserTest extends TestCase
 {
-    /**
-     * @doesNotPerformAssertions
-     */
-    public function testNewParser()
+    #[\PHPUnit\Framework\Attributes\DoesNotPerformAssertions]
+    public function testNewParser(): \Alchemy\Zippy\Parser\GNUTarOutputParser
     {
         return new GNUTarOutputParser();
     }
 
-    /**
-     * @depends testNewParser
-     */
+    #[\PHPUnit\Framework\Attributes\Depends('testNewParser')]
     public function testParseFileListing($parser)
     {
         $current_timezone = ini_get('date.timezone');
@@ -31,7 +29,7 @@ class GNUTarOutputParserTest extends TestCase
 
         $members = $parser->parseFileListing($output);
 
-        $this->assertEquals(5, count($members));
+        $this->assertCount(5, $members);
 
         foreach ($members as $member) {
             $this->assertTrue(is_array($member));
@@ -43,7 +41,7 @@ class GNUTarOutputParserTest extends TestCase
         $this->assertEquals('practice/', $memberDirectory['location']);
         $this->assertEquals(0, $memberDirectory['size']);
         $date = $memberDirectory['mtime'];
-        $this->assertTrue($date instanceof \DateTime);
+        $this->assertInstanceOf(\DateTime::class, $date);
         $this->assertEquals('1149854760', $date->format("U"));
 
         $memberFile = array_pop($members);
@@ -52,15 +50,13 @@ class GNUTarOutputParserTest extends TestCase
         $this->assertEquals('practice/records', $memberFile['location']);
         $this->assertEquals(10240, $memberFile['size']);
         $date = $memberFile['mtime'];
-        $this->assertTrue($date instanceof \DateTime);
+        $this->assertInstanceOf(\DateTime::class, $date);
         $this->assertEquals('1149854760', $date->format("U"));
 
         ini_set('date.timezone', $current_timezone);
     }
 
-    /**
-     * @depends testNewParser
-     */
+    #[\PHPUnit\Framework\Attributes\Depends('testNewParser')]
     public function testParseVersion($parser)
     {
         $this->assertEquals('2.8.3', $parser->parseInflatorVersion("bsdtar 2.8.3 - libarchive 2.8.3"));

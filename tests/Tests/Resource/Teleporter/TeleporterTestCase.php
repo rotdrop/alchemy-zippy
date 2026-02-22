@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Alchemy\Zippy\Tests\Resource\Teleporter;
 
 use Alchemy\Zippy\Tests\TestCase;

@@ -1,14 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Alchemy\Zippy\Functional;
 
 use Alchemy\Zippy\Archive\ArchiveInterface;
 
-class ExtractMembersArchiveTest extends FunctionalTestCase
+final class ExtractMembersArchiveTest extends FunctionalTestCase
 {
-    /**
-     * @doesNotPerformAssertions
-     */
+    #[\PHPUnit\Framework\Attributes\DoesNotPerformAssertions]
     public function testOpen()
     {
         $adapter = $this->getAdapter();
@@ -19,9 +19,7 @@ class ExtractMembersArchiveTest extends FunctionalTestCase
         return $archive;
     }
 
-    /**
-     * @depends testOpen
-     */
+    #[\PHPUnit\Framework\Attributes\Depends('testOpen')]
     public function testExtractMembersString(ArchiveInterface $archive)
     {
         $archive->extractMembers('directory/README.md', __DIR__ . '/samples/tmp');
@@ -31,9 +29,7 @@ class ExtractMembersArchiveTest extends FunctionalTestCase
         $this->assertFileExists(__DIR__ . '/samples/tmp/directory/photo.jpg');
     }
 
-    /**
-     * @depends testOpen
-     */
+    #[\PHPUnit\Framework\Attributes\Depends('testOpen')]
     public function testExtractFromMember(ArchiveInterface $archive)
     {
         foreach ($archive as $file) {

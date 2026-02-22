@@ -1,16 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Alchemy\Zippy\Tests\Resource\Teleporter;
 
 use Alchemy\Zippy\Resource\Resource;
 use Alchemy\Zippy\Resource\Teleporter\StreamTeleporter;
 
-class StreamTeleporterTest extends TeleporterTestCase
+final class StreamTeleporterTest extends TeleporterTestCase
 {
-    /**
-     * @covers Alchemy\Zippy\Resource\Teleporter\StreamTeleporter::teleport
-     * @dataProvider provideContexts
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideContexts')]
     public function testTeleport($context)
     {
         $teleporter = StreamTeleporter::create();
@@ -28,10 +27,7 @@ class StreamTeleporterTest extends TeleporterTestCase
         unlink($context . '/' . $target);
     }
 
-    /**
-     * @covers Alchemy\Zippy\Resource\Teleporter\StreamTeleporter::teleport
-     * @dataProvider provideContexts
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideContexts')]
     public function testTeleportInNonStreamMode($context)
     {
         $teleporter = StreamTeleporter::create();
@@ -49,9 +45,6 @@ class StreamTeleporterTest extends TeleporterTestCase
         unlink($context . '/' . $target);
     }
 
-    /**
-     * @covers Alchemy\Zippy\Resource\Teleporter\StreamTeleporter::create
-     */
     public function testCreate()
     {
         $this->assertInstanceOf('Alchemy\Zippy\Resource\Teleporter\StreamTeleporter', StreamTeleporter::create());

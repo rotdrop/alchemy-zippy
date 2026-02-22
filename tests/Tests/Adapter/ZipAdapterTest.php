@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Alchemy\Zippy\Tests\Adapter;
 
 use Alchemy\Zippy\Adapter\ZipAdapter;
 use Alchemy\Zippy\Parser\ParserFactory;
 
-class ZipAdapterTest extends AdapterTestCase
+final class ZipAdapterTest extends AdapterTestCase
 {
     protected static $zipFile;
 
@@ -70,9 +72,7 @@ class ZipAdapterTest extends AdapterTestCase
      */
     public function testCreateNoFiles()
     {
-        $mockedProcessBuilder = $this->getMockBuilder('\Alchemy\Zippy\ProcessBuilder\ProcessBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mockedProcessBuilder = $this->createStub('\Alchemy\Zippy\ProcessBuilder\ProcessBuilder');
 
         $this->adapter->setInflator($this->getMockedProcessBuilderFactory($mockedProcessBuilder));
 
@@ -81,37 +81,31 @@ class ZipAdapterTest extends AdapterTestCase
 
     public function testCreate()
     {
-        $mockedProcessBuilder = $this->getMockBuilder('\Alchemy\Zippy\ProcessBuilder\ProcessBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mockedProcessBuilder = $this->createMock('\Alchemy\Zippy\ProcessBuilder\ProcessBuilder');
 
         $mockedProcessBuilder
-            ->expects($this->at(0))
+            ->expects($this->never())
             ->method('add')
-            ->with($this->equalTo('-r'))
-            ->will($this->returnSelf());
+            ->with('-r')->willReturnSelf();
 
         $mockedProcessBuilder
-            ->expects($this->at(1))
+            ->expects($this->once())
             ->method('add')
-            ->with($this->equalTo($this->getExpectedAbsolutePathForTarget(self::$zipFile)))
-            ->will($this->returnSelf());
+            ->with($this->getExpectedAbsolutePathForTarget(self::$zipFile))->willReturnSelf();
 
         $mockedProcessBuilder
-            ->expects($this->at(2))
-            ->method('setWorkingDirectory')
-            ->will($this->returnSelf());
+            ->expects($this->exactly(2))
+            ->method('setWorkingDirectory')->willReturnSelf();
 
         $mockedProcessBuilder
-            ->expects($this->at(3))
+            ->expects($this->exactly(3))
             ->method('add')
-            ->with($this->equalTo('lalala'))
-            ->will($this->returnSelf());
+            ->with('lalala')->willReturnSelf();
 
         $mockedProcessBuilder
             ->expects($this->once())
             ->method('getProcess')
-            ->will($this->returnValue($this->getSuccessFullMockProcess()));
+            ->willReturn($this->getSuccessFullMockProcess());
 
         $manager = $this->getResourceManagerMock(__DIR__, array('lalala'));
         $outputParser = ParserFactory::create(ZipAdapter::getName());
@@ -128,9 +122,7 @@ class ZipAdapterTest extends AdapterTestCase
         return self::$zipFile;
     }
 
-    /**
-     * @depends testCreate
-     */
+    #[\PHPUnit\Framework\Attributes\Depends('testCreate')]
     public function testOpen($zipFile)
     {
         $archive = $this->adapter->open($this->getResource($zipFile));
@@ -142,26 +134,22 @@ class ZipAdapterTest extends AdapterTestCase
         $resource = $this->getResource(self::$zipFile);
         $archive = $this->adapter->open($resource);
 
-        $mockedProcessBuilder = $this->getMockBuilder('\Alchemy\Zippy\ProcessBuilder\ProcessBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mockedProcessBuilder = $this->createMock('\Alchemy\Zippy\ProcessBuilder\ProcessBuilder');
 
         $mockedProcessBuilder
-            ->expects($this->at(0))
+            ->expects($this->never())
             ->method('add')
-            ->with($this->equalTo('-l'))
-            ->will($this->returnSelf());
+            ->with('-l')->willReturnSelf();
 
         $mockedProcessBuilder
-            ->expects($this->at(1))
+            ->expects($this->once())
             ->method('add')
-            ->with($this->equalTo($resource->getResource()))
-            ->will($this->returnSelf());
+            ->with($resource->getResource())->willReturnSelf();
 
         $mockedProcessBuilder
             ->expects($this->once())
             ->method('getProcess')
-            ->will($this->returnValue($this->getSuccessFullMockProcess()));
+            ->willReturn($this->getSuccessFullMockProcess());
 
         $this->adapter->setDeflator($this->getMockedProcessBuilderFactory($mockedProcessBuilder));
 
@@ -172,32 +160,27 @@ class ZipAdapterTest extends AdapterTestCase
     {
         $resource = $this->getResource(self::$zipFile);
 
-        $mockedProcessBuilder = $this->getMockBuilder('\Alchemy\Zippy\ProcessBuilder\ProcessBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mockedProcessBuilder = $this->createMock('\Alchemy\Zippy\ProcessBuilder\ProcessBuilder');
 
         $mockedProcessBuilder
-            ->expects($this->at(0))
+            ->expects($this->never())
             ->method('add')
-            ->with($this->equalTo('-r'))
-            ->will($this->returnSelf());
+            ->with('-r')->willReturnSelf();
 
         $mockedProcessBuilder
-            ->expects($this->at(1))
+            ->expects($this->once())
             ->method('add')
-            ->with($this->equalTo('-u'))
-            ->will($this->returnSelf());
+            ->with('-u')->willReturnSelf();
 
         $mockedProcessBuilder
-            ->expects($this->at(2))
+            ->expects($this->exactly(2))
             ->method('add')
-            ->with($this->equalTo($resource->getResource()))
-            ->will($this->returnSelf());
+            ->with($resource->getResource())->willReturnSelf();
 
         $mockedProcessBuilder
             ->expects($this->once())
             ->method('getProcess')
-            ->will($this->returnValue($this->getSuccessFullMockProcess()));
+            ->willReturn($this->getSuccessFullMockProcess());
 
         $this->adapter->setInflator($this->getMockedProcessBuilderFactory($mockedProcessBuilder));
 
@@ -206,22 +189,19 @@ class ZipAdapterTest extends AdapterTestCase
 
     public function testgetInflatorVersion()
     {
-        $mockedProcessBuilder = $this->getMockBuilder('\Alchemy\Zippy\ProcessBuilder\ProcessBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mockedProcessBuilder = $this->createMock('\Alchemy\Zippy\ProcessBuilder\ProcessBuilder');
 
         $mockedProcessBuilder
-            ->expects($this->at(0))
+            ->expects($this->never())
             ->method('add')
-            ->with($this->equalTo('-h'))
-            ->will($this->returnSelf());
+            ->with('-h')->willReturnSelf();
 
         $mockedProcessBuilder
             ->expects($this->once())
             ->method('getProcess')
-            ->will($this->returnValue($this->getSuccessFullMockProcess()));
+            ->willReturn($this->getSuccessFullMockProcess());
 
-        $this->adapter->setParser($this->getMockBuilder('\Alchemy\Zippy\Parser\ParserInterface')->getMock());
+        $this->adapter->setParser($this->createStub('\Alchemy\Zippy\Parser\ParserInterface'));
         $this->adapter->setInflator($this->getMockedProcessBuilderFactory($mockedProcessBuilder));
 
         $this->adapter->getInflatorVersion();
@@ -229,22 +209,19 @@ class ZipAdapterTest extends AdapterTestCase
 
     public function testgetDeflatorVersion()
     {
-        $mockedProcessBuilder = $this->getMockBuilder('\Alchemy\Zippy\ProcessBuilder\ProcessBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mockedProcessBuilder = $this->createMock('\Alchemy\Zippy\ProcessBuilder\ProcessBuilder');
 
         $mockedProcessBuilder
-            ->expects($this->at(0))
+            ->expects($this->never())
             ->method('add')
-            ->with($this->equalTo('-h'))
-            ->will($this->returnSelf());
+            ->with('-h')->willReturnSelf();
 
         $mockedProcessBuilder
             ->expects($this->once())
             ->method('getProcess')
-            ->will($this->returnValue($this->getSuccessFullMockProcess()));
+            ->willReturn($this->getSuccessFullMockProcess());
 
-        $this->adapter->setParser($this->getMockBuilder('\Alchemy\Zippy\Parser\ParserInterface')->getMock());
+        $this->adapter->setParser($this->createStub('\Alchemy\Zippy\Parser\ParserInterface'));
         $this->adapter->setDeflator($this->getMockedProcessBuilderFactory($mockedProcessBuilder));
 
         $this->adapter->getDeflatorVersion();
@@ -254,45 +231,38 @@ class ZipAdapterTest extends AdapterTestCase
     {
         $resource = $this->getResource(self::$zipFile);
 
-        $mockedProcessBuilder = $this->getMockBuilder('\Alchemy\Zippy\ProcessBuilder\ProcessBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mockedProcessBuilder = $this->createMock('\Alchemy\Zippy\ProcessBuilder\ProcessBuilder');
 
         $mockedProcessBuilder
-            ->expects($this->at(0))
+            ->expects($this->never())
             ->method('add')
-            ->with($this->equalTo('-d'))
-            ->will($this->returnSelf());
+            ->with('-d')->willReturnSelf();
 
         $mockedProcessBuilder
-            ->expects($this->at(1))
+            ->expects($this->once())
             ->method('add')
-            ->with($this->equalTo($resource->getResource()))
-            ->will($this->returnSelf());
+            ->with($resource->getResource())->willReturnSelf();
 
         $mockedProcessBuilder
-            ->expects($this->at(2))
+            ->expects($this->exactly(2))
             ->method('add')
-            ->with($this->equalTo(__DIR__ . '/../TestCase.php'))
-            ->will($this->returnSelf());
+            ->with(__DIR__ . '/../TestCase.php')->willReturnSelf();
 
         $mockedProcessBuilder
-            ->expects($this->at(3))
+            ->expects($this->exactly(3))
             ->method('add')
-            ->with($this->equalTo('path-to-file'))
-            ->will($this->returnSelf());
+            ->with('path-to-file')->willReturnSelf();
 
         $mockedProcessBuilder
             ->expects($this->once())
             ->method('getProcess')
-            ->will($this->returnValue($this->getSuccessFullMockProcess()));
+            ->willReturn($this->getSuccessFullMockProcess());
 
-        $archiveFileMock = $this->getMockBuilder('\Alchemy\Zippy\Archive\MemberInterface')->getMock();
+        $archiveFileMock = $this->createMock('\Alchemy\Zippy\Archive\MemberInterface');
 
         $archiveFileMock
-            ->expects($this->any())
             ->method('getLocation')
-            ->will($this->returnValue('path-to-file'));
+            ->willReturn('path-to-file');
 
         $this->adapter->setInflator($this->getMockedProcessBuilderFactory($mockedProcessBuilder));
 
@@ -306,26 +276,22 @@ class ZipAdapterTest extends AdapterTestCase
     {
         $resource = $this->getResource(self::$zipFile);
 
-        $mockedProcessBuilder = $this->getMockBuilder('\Alchemy\Zippy\ProcessBuilder\ProcessBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mockedProcessBuilder = $this->createMock('\Alchemy\Zippy\ProcessBuilder\ProcessBuilder');
 
         $mockedProcessBuilder
-            ->expects($this->at(0))
+            ->expects($this->never())
             ->method('add')
-            ->with($this->equalTo('-o'))
-            ->will($this->returnSelf());
+            ->with('-o')->willReturnSelf();
 
         $mockedProcessBuilder
-            ->expects($this->at(1))
+            ->expects($this->once())
             ->method('add')
-            ->with($this->equalTo($resource->getResource()))
-            ->will($this->returnSelf());
+            ->with($resource->getResource())->willReturnSelf();
 
         $mockedProcessBuilder
             ->expects($this->once())
             ->method('getProcess')
-            ->will($this->returnValue($this->getSuccessFullMockProcess()));
+            ->willReturn($this->getSuccessFullMockProcess());
 
         $this->adapter->setDeflator($this->getMockedProcessBuilderFactory($mockedProcessBuilder));
 
@@ -338,38 +304,32 @@ class ZipAdapterTest extends AdapterTestCase
     {
         $resource = $this->getResource(self::$zipFile);
 
-        $mockedProcessBuilder = $this->getMockBuilder('\Alchemy\Zippy\ProcessBuilder\ProcessBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mockedProcessBuilder = $this->createMock('\Alchemy\Zippy\ProcessBuilder\ProcessBuilder');
 
         $mockedProcessBuilder
-            ->expects($this->at(0))
+            ->expects($this->never())
             ->method('add')
-            ->with($this->equalTo($resource->getResource()))
-            ->will($this->returnSelf());
+            ->with($resource->getResource())->willReturnSelf();
 
         $mockedProcessBuilder
-            ->expects($this->at(1))
+            ->expects($this->once())
             ->method('add')
-            ->with($this->equalTo('-d'))
-            ->will($this->returnSelf());
+            ->with('-d')->willReturnSelf();
 
         $mockedProcessBuilder
-            ->expects($this->at(2))
+            ->expects($this->exactly(2))
             ->method('add')
-            ->with($this->equalTo(__DIR__))
-            ->will($this->returnSelf());
+            ->with(__DIR__)->willReturnSelf();
 
         $mockedProcessBuilder
-            ->expects($this->at(3))
+            ->expects($this->exactly(3))
             ->method('add')
-            ->with($this->equalTo(__FILE__))
-            ->will($this->returnSelf());
+            ->with(__FILE__)->willReturnSelf();
 
         $mockedProcessBuilder
             ->expects($this->once())
             ->method('getProcess')
-            ->will($this->returnValue($this->getSuccessFullMockProcess()));
+            ->willReturn($this->getSuccessFullMockProcess());
 
         $this->adapter->setDeflator($this->getMockedProcessBuilderFactory($mockedProcessBuilder));
 

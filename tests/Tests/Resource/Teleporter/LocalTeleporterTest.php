@@ -1,16 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Alchemy\Zippy\Tests\Resource\Teleporter;
 
 use Alchemy\Zippy\Resource\Resource;
 use Alchemy\Zippy\Resource\Teleporter\LocalTeleporter;
 
-class LocalTeleporterTest extends TeleporterTestCase
+final class LocalTeleporterTest extends TeleporterTestCase
 {
-    /**
-     * @covers Alchemy\Zippy\Resource\Teleporter\LocalTeleporter::teleport
-     * @dataProvider provideContexts
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideContexts')]
     public function testTeleport($context)
     {
         $teleporter = LocalTeleporter::create();
@@ -28,10 +27,7 @@ class LocalTeleporterTest extends TeleporterTestCase
         unlink($context . '/' . $target);
     }
 
-    /**
-     * @covers Alchemy\Zippy\Resource\Teleporter\LocalTeleporter::teleport
-     * @dataProvider provideContexts
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideContexts')]
     public function testTeleportAStream($context)
     {
         $teleporter = LocalTeleporter::create();
@@ -50,9 +46,9 @@ class LocalTeleporterTest extends TeleporterTestCase
     }
 
     /**
-     * @dataProvider provideInvalidSources
      * @expectedException \Alchemy\Zippy\Exception\InvalidArgumentException
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideInvalidSources')]
     public function testTeleportOnNonExistentFile($source)
     {
         $teleporter = LocalTeleporter::create();
@@ -63,17 +59,13 @@ class LocalTeleporterTest extends TeleporterTestCase
         $teleporter->teleport($resource, __DIR__);
     }
 
-    public function provideInvalidSources()
+    public function provideInvalidSources(): \Iterator
     {
-        return array(
-            array('file://path/to/nonexistent/file'),
-            array('/path/to/nonexistent/file'),
-        );
+        yield array('file://path/to/nonexistent/file');
+        yield array('/path/to/nonexistent/file');
     }
 
-    /**
-     * @dataProvider provideContexts
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideContexts')]
     public function testTeleportADir($context)
     {
         $teleporter = LocalTeleporter::create();
@@ -100,9 +92,6 @@ class LocalTeleporterTest extends TeleporterTestCase
         rmdir($context . '/' . $target);
     }
 
-    /**
-     * @covers Alchemy\Zippy\Resource\Teleporter\LocalTeleporter::create
-     */
     public function testCreate()
     {
         $this->assertInstanceOf('Alchemy\Zippy\Resource\Teleporter\LocalTeleporter', LocalTeleporter::create());

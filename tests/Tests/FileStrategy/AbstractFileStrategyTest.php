@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Alchemy\Zippy\Tests\FileStrategy;
 
 use Alchemy\Zippy\Adapter\AdapterContainer;
 use Alchemy\Zippy\Tests\TestCase;
 use Alchemy\Zippy\Exception\RuntimeException;
 
-class AbstractFileStrategyTest extends TestCase
+final class AbstractFileStrategyTest extends TestCase
 {
     /**
      * @expectedException   \InvalidArgumentException
@@ -16,11 +18,11 @@ class AbstractFileStrategyTest extends TestCase
         $container = AdapterContainer::load();
 
         $stub = $this->getMockForAbstractClass('Alchemy\Zippy\FileStrategy\AbstractFileStrategy', array($container));
-        $stub->expects($this->any())
+        $stub
             ->method('getServiceNames')
-            ->will($this->returnValue(array(
+            ->willReturn(array(
                 'Unknown\Services'
-            )));
+            ));
 
 
         $adapters = $stub->getAdapters();
@@ -33,44 +35,42 @@ class AbstractFileStrategyTest extends TestCase
         $container = AdapterContainer::load();
 
         $stub = $this->getMockForAbstractClass('Alchemy\Zippy\FileStrategy\AbstractFileStrategy', array($container));
-        $stub->expects($this->any())
+        $stub
             ->method('getServiceNames')
-            ->will($this->returnValue(array(
+            ->willReturn(array(
                 'Alchemy\\Zippy\\Adapter\\ZipAdapter',
                 'Alchemy\\Zippy\\Adapter\\ZipExtensionAdapter'
-            )));
+            ));
 
         $adapters = $stub->getAdapters();
         $this->assertInternalType('array', $adapters);
         $this->assertCount(2, $adapters);
-        foreach ($adapters as $adapter) {
-            $this->assertInstanceOf('Alchemy\\Zippy\\Adapter\\AdapterInterface', $adapter);
-        }
+        $this->assertContainsOnlyInstancesOf('Alchemy\\Zippy\\Adapter\\AdapterInterface', $adapters);
     }
 
     public function testGetAdaptersWithAdapterThatRaiseAnException()
     {
-        $adapterMock = $this->getMockBuilder('\Alchemy\Zippy\Adapter\AdapterInterface')->getMock();
-        $container = $this->getMockBuilder('\Alchemy\Zippy\Adapter\AdapterContainer')->getMock();
+        $adapterMock = $this->createStub('\Alchemy\Zippy\Adapter\AdapterInterface');
+        $container = $this->createMock('\Alchemy\Zippy\Adapter\AdapterContainer');
         $container
-            ->expects($this->at(0))
+            ->expects($this->never())
             ->method('offsetGet')
-            ->with($this->equalTo('Alchemy\\Zippy\\Adapter\\ZipAdapter'))
-            ->will($this->returnValue($adapterMock));
+            ->with('Alchemy\\Zippy\\Adapter\\ZipAdapter')
+            ->willReturn($adapterMock);
 
         $container
-            ->expects($this->at(1))
+            ->expects($this->once())
             ->method('offsetGet')
-            ->with($this->equalTo('Alchemy\\Zippy\\Adapter\\ZipExtensionAdapter'))
-            ->will($this->throwException(new RuntimeException()));
+            ->with('Alchemy\\Zippy\\Adapter\\ZipExtensionAdapter')
+            ->willThrowException(new RuntimeException());
 
         $stub = $this->getMockForAbstractClass('Alchemy\Zippy\FileStrategy\AbstractFileStrategy', array($container));
-        $stub->expects($this->any())
+        $stub
             ->method('getServiceNames')
-            ->will($this->returnValue(array(
+            ->willReturn(array(
                 'Alchemy\\Zippy\\Adapter\\ZipAdapter',
                 'Alchemy\\Zippy\\Adapter\\ZipExtensionAdapter'
-            )));
+            ));
 
         $adapters = $stub->getAdapters();
         $this->assertInternalType('array', $adapters);

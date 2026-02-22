@@ -1,24 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Alchemy\Zippy\Tests\Resource;
 
 use Alchemy\Zippy\Tests\TestCase;
 use Alchemy\Zippy\Resource\RequestMapper;
 
-class RequestMapperTest extends TestCase
+final class RequestMapperTest extends TestCase
 {
-    /**
-     * @covers Alchemy\Zippy\Resource\RequestMapper::map
-     */
     public function testMap()
     {
-        $locator = $this->getMockBuilder('\Alchemy\Zippy\Resource\TargetLocator')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $locator = $this->createMock('\Alchemy\Zippy\Resource\TargetLocator');
 
-        $locator->expects($this->any())
+        $locator
             ->method('locate')
-            ->will($this->returnValue('computed-location'));
+            ->willReturn('computed-location');
 
         $mapper = new RequestMapper($locator);
 
@@ -54,9 +51,6 @@ class RequestMapperTest extends TestCase
         }
     }
 
-    /**
-     * @covers Alchemy\Zippy\Resource\RequestMapper::create
-     */
     public function testCreate()
     {
         $mapper = RequestMapper::create();

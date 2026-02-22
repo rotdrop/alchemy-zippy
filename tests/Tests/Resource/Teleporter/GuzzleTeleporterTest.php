@@ -1,16 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Alchemy\Zippy\Tests\Resource\Teleporter;
 
 use Alchemy\Zippy\Resource\Teleporter\GuzzleTeleporter;
 use Alchemy\Zippy\Resource\Resource;
 
-class GuzzleTeleporterTest extends TeleporterTestCase
+final class GuzzleTeleporterTest extends TeleporterTestCase
 {
-    /**
-     * @covers Alchemy\Zippy\Resource\Teleporter\GuzzleTeleporter::teleport
-     * @dataProvider provideContexts
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideContexts')]
     public function testTeleport($context)
     {
         $teleporter = GuzzleTeleporter::create();
@@ -28,9 +27,6 @@ class GuzzleTeleporterTest extends TeleporterTestCase
         unlink($context . '/' . $target);
     }
 
-    /**
-     * @covers Alchemy\Zippy\Resource\Teleporter\GuzzleTeleporter::create
-     */
     public function testCreate()
     {
         $this->assertInstanceOf('Alchemy\Zippy\Resource\Teleporter\GuzzleTeleporter', GuzzleTeleporter::create());

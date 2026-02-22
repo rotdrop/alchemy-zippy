@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Alchemy\Zippy\Tests\Adapter\GNUTar;
 
-class TarBz2GNUTarAdapterTest extends GNUTarAdapterWithOptionsTest
+final class TarBz2GNUTarAdapterTest extends GNUTarAdapterWithOptionsTest
 {
     protected function getOptions()
     {

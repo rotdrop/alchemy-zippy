@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Alchemy\Zippy\Tests\Resource;
 
 use Alchemy\Zippy\Resource\ResourceCollection;
@@ -7,11 +9,8 @@ use Alchemy\Zippy\Tests\TestCase;
 use Alchemy\Zippy\Resource\ResourceManager;
 use Symfony\Component\Filesystem\Filesystem;
 
-class ResourceManagerTest extends TestCase
+final class ResourceManagerTest extends TestCase
 {
-    /**
-     * @covers Alchemy\Zippy\Resource\ResourceManager::handle
-     */
     public function testHandle()
     {
         $mapper = $this->getRequestMapperMock();
@@ -29,8 +28,8 @@ class ResourceManagerTest extends TestCase
 
         $mapper->expects($this->once())
                ->method('map')
-               ->with($this->equalTo($context), $this->equalTo($request))
-               ->will($this->returnValue($expectedCollection));
+               ->with($context, $request)
+               ->willReturn($expectedCollection);
 
         $collection = $manager->handle($context, $request);
         $this->assertEquals($expectedCollection, $collection);
@@ -53,8 +52,8 @@ class ResourceManagerTest extends TestCase
 
         $mapper->expects($this->once())
                ->method('map')
-               ->with($this->equalTo($context), $this->equalTo($request))
-               ->will($this->returnValue($expectedCollection));
+               ->with($context, $request)
+               ->willReturn($expectedCollection);
 
         $collection = $manager->handle($context, $request);
         $this->assertNotEquals($expectedCollection, $collection);
@@ -63,31 +62,24 @@ class ResourceManagerTest extends TestCase
 
     private function createProcessableInPlaceResource()
     {
-        $resource = $this->getMockBuilder('\Alchemy\Zippy\Resource\Resource')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $resource->expects($this->any())
+        $resource = $this->createMock('\Alchemy\Zippy\Resource\Resource');
+        $resource
             ->method('canBeProcessedInPlace')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         return $resource;
     }
 
     private function createNotProcessableInPlaceResource()
     {
-        $resource = $this->getMockBuilder('\Alchemy\Zippy\Resource\Resource')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $resource->expects($this->any())
+        $resource = $this->createMock('\Alchemy\Zippy\Resource\Resource');
+        $resource
             ->method('canBeProcessedInPlace')
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         return $resource;
     }
 
-    /**
-     * @covers Alchemy\Zippy\Resource\ResourceManager::cleanup
-     */
     public function testCleanup()
     {
         $fs = $this->getFilesystemMock();
@@ -102,26 +94,21 @@ class ResourceManagerTest extends TestCase
 
         $fs->expects($this->once())
             ->method('remove')
-            ->with($this->equalTo($context));
+            ->with($context);
 
-        $collection = $this->getMockBuilder('\Alchemy\Zippy\Resource\ResourceCollection')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $collection = $this->createMock('\Alchemy\Zippy\Resource\ResourceCollection');
 
         $collection->expects($this->once())
             ->method('isTemporary')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $collection->expects($this->once())
             ->method('getContext')
-            ->will($this->returnValue($context));
+            ->willReturn($context);
 
         $manager->cleanup($collection);
     }
 
-    /**
-     * @covers Alchemy\Zippy\Resource\ResourceManager::cleanup
-     */
     public function testCleanupWhenCollectionIsNotTemporary()
     {
         $fs = $this->getFilesystemMock();
@@ -135,13 +122,11 @@ class ResourceManagerTest extends TestCase
         $fs->expects($this->never())
             ->method('remove');
 
-        $collection = $this->getMockBuilder('\Alchemy\Zippy\Resource\ResourceCollection')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $collection = $this->createMock('\Alchemy\Zippy\Resource\ResourceCollection');
 
         $collection->expects($this->once())
             ->method('isTemporary')
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $collection->expects($this->never())
             ->method('getContext');
@@ -149,9 +134,6 @@ class ResourceManagerTest extends TestCase
         $manager->cleanup($collection);
     }
 
-    /**
-     * @covers Alchemy\Zippy\Resource\ResourceManager::handle
-     */
     public function testFunctionnal()
     {
         $workDir = __DIR__;
@@ -220,22 +202,16 @@ class ResourceManagerTest extends TestCase
 
     protected function getRequestMapperMock()
     {
-        return $this->getMockBuilder('\Alchemy\Zippy\Resource\RequestMapper')
-            ->disableOriginalConstructor()
-            ->getMock();
+        return $this->createMock('\Alchemy\Zippy\Resource\RequestMapper');
     }
 
     protected function getResourceTeleporterMock()
     {
-        return $this->getMockBuilder('\Alchemy\Zippy\Resource\ResourceTeleporter')
-            ->disableOriginalConstructor()
-            ->getMock();
+        return $this->createMock('\Alchemy\Zippy\Resource\ResourceTeleporter');
     }
 
     protected function getFilesystemMock()
     {
-        return $this->getMockBuilder('\Symfony\Component\Filesystem\Filesystem')
-            ->disableOriginalConstructor()
-            ->getMock();
+        return $this->createMock('\Symfony\Component\Filesystem\Filesystem');
     }
 }

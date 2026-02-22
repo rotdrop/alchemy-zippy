@@ -1,16 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Alchemy\Zippy\Tests\Resource;
 
 use Alchemy\Zippy\Tests\TestCase;
 use Alchemy\Zippy\Resource\TeleporterContainer;
 
-class TeleporterContainerTest extends TestCase
+#[\PHPUnit\Framework\Attributes\CoversMethod(\Alchemy\Zippy\Resource\TeleporterContainer::class, 'fromResource')]
+final class TeleporterContainerTest extends TestCase
 {
-    /**
-     * @covers \Alchemy\Zippy\Resource\TeleporterContainer::fromResource
-     * @dataProvider provideResourceData
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideResourceData')]
     public function testFromResource($resource, $classname)
     {
         $container = TeleporterContainer::load();
@@ -18,7 +18,6 @@ class TeleporterContainerTest extends TestCase
         $this->assertInstanceOf($classname, $container->fromResource($resource));
     }
     /**
-     * @covers \Alchemy\Zippy\Resource\TeleporterContainer::fromResource
      * @expectedException \Alchemy\Zippy\Exception\InvalidArgumentException
      */
     public function testFromResourceThatFails()
@@ -27,32 +26,25 @@ class TeleporterContainerTest extends TestCase
         $container->fromResource($this->createResource(array()));
     }
 
-    public function provideResourceData()
+    public function provideResourceData(): \Iterator
     {
-        return array(
-            array($this->createResource(__FILE__), 'Alchemy\Zippy\Resource\Teleporter\LocalTeleporter'),
-            array($this->createResource(fopen(__FILE__, 'rb')), 'Alchemy\Zippy\Resource\Teleporter\StreamTeleporter'),
-            array($this->createResource('ftp://192.168.1.1/images/elephant.png'), 'Alchemy\Zippy\Resource\Teleporter\StreamTeleporter'),
-            array($this->createResource('http://127.0.0.1:8080/plus-badge.png'), 'Alchemy\Zippy\Resource\Teleporter\GenericTeleporter'),
-        );
+        yield array($this->createResource(__FILE__), 'Alchemy\Zippy\Resource\Teleporter\LocalTeleporter');
+        yield array($this->createResource(fopen(__FILE__, 'rb')), 'Alchemy\Zippy\Resource\Teleporter\StreamTeleporter');
+        yield array($this->createResource('ftp://192.168.1.1/images/elephant.png'), 'Alchemy\Zippy\Resource\Teleporter\StreamTeleporter');
+        yield array($this->createResource('http://127.0.0.1:8080/plus-badge.png'), 'Alchemy\Zippy\Resource\Teleporter\GenericTeleporter');
     }
 
     private function createResource($data)
     {
-        $resource = $this->getMockBuilder('\Alchemy\Zippy\Resource\Resource')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resource = $this->createMock('\Alchemy\Zippy\Resource\Resource');
 
-        $resource->expects($this->any())
+        $resource
             ->method('getOriginal')
-            ->will($this->returnValue($data));
+            ->willReturn($data);
 
         return $resource;
     }
 
-    /**
-     * @covers Alchemy\Zippy\Resource\TeleporterContainer::load
-     */
     public function testLoad()
     {
         $container = TeleporterContainer::load();

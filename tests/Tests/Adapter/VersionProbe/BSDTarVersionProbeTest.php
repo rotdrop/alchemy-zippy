@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Alchemy\Zippy\Tests\Adapter\VersionProbe;
 
-class BSDTarVersionProbeTest extends AbstractTarVersionProbeTest
+final class BSDTarVersionProbeTest extends AbstractTarVersionProbeTest
 {
     public function getProbeClassName()
     {

@@ -1,18 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Alchemy\Zippy\Tests\Archive;
 
 use Alchemy\Zippy\Tests\TestCase;
 use Alchemy\Zippy\Archive\ArchiveInterface;
 use Alchemy\Zippy\Archive\Archive;
 
-class ArchiveTest extends TestCase
+final class ArchiveTest extends TestCase
 {
-    public function testNewInstance()
+    public function testNewInstance(): \Alchemy\Zippy\Archive\Archive
     {
         $archive = new Archive($this->getResource('location'), $this->getAdapterMock(), $this->getResourceManagerMock());
 
-        $this->assertTrue($archive instanceof ArchiveInterface);
+        $this->assertInstanceOf(\Alchemy\Zippy\Archive\ArchiveInterface::class, $archive);
 
         return $archive;
     }
@@ -24,11 +26,11 @@ class ArchiveTest extends TestCase
         $mockAdapter
             ->expects($this->once())
             ->method('listMembers')
-            ->will($this->returnValue(array('1', '2')));
+            ->willReturn(array('1', '2'));
 
         $archive = new Archive($this->getResource('location'), $mockAdapter, $this->getResourceManagerMock());
 
-        $this->assertEquals(2, count($archive));
+        $this->assertCount(2, $archive);
     }
 
     public function testGetMembers()
@@ -40,15 +42,15 @@ class ArchiveTest extends TestCase
         $mockAdapter
             ->expects($this->once())
             ->method('listMembers')
-            ->with($this->equalTo($resource))
-            ->will($this->returnValue(array('1', '2')));
+            ->with($resource)
+            ->willReturn(array('1', '2'));
 
         $archive = new Archive($this->getResource('location'), $mockAdapter, $this->getResourceManagerMock());
 
         $members = $archive->getMembers();
 
         $this->assertTrue(is_array($members));
-        $this->assertEquals(2, count($members));
+        $this->assertCount(2, $members);
     }
 
     public function testAddMembers()
@@ -60,7 +62,7 @@ class ArchiveTest extends TestCase
         $mockAdapter
             ->expects($this->once())
             ->method('add')
-            ->with($this->equalTo($resource), $this->equalTo(array('hello')), $this->equalTo(true));
+            ->with($resource, array('hello'), true);
 
         $resourceManager = $this->getResourceManagerMock();
 
@@ -84,6 +86,6 @@ class ArchiveTest extends TestCase
 
     private function getAdapterMock()
     {
-        return $this->getMockBuilder('\Alchemy\Zippy\Adapter\AdapterInterface')->getMock();
+        return $this->createMock('\Alchemy\Zippy\Adapter\AdapterInterface');
     }
 }

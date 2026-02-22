@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Alchemy\Zippy\Tests\Resource;
 
 use Alchemy\Zippy\Resource\Reader\Stream\StreamReader;
@@ -7,11 +9,9 @@ use Alchemy\Zippy\Resource\Resource;
 use Alchemy\Zippy\Resource\Writer\FilesystemWriter;
 use Alchemy\Zippy\Tests\TestCase;
 
-class FilesystemWriterTest extends TestCase
+final class FilesystemWriterTest extends TestCase
 {
-    /**
-     * @doesNotPerformAssertions
-     */
+    #[\PHPUnit\Framework\Attributes\DoesNotPerformAssertions]
     public function testWriteFromReader()
     {
         $resource = new Resource(fopen(__FILE__, 'r'), fopen(__FILE__, 'r'));

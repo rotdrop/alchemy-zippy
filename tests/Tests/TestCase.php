@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Alchemy\Zippy\Tests;
 
 use Alchemy\Zippy\Adapter\AdapterInterface;
@@ -29,26 +31,23 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 
         $collection = new ResourceCollection($context, $elements, false);
 
-        $manager = $this
-            ->getMockBuilder('\Alchemy\Zippy\Resource\ResourceManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $manager = $this->createMock('\Alchemy\Zippy\Resource\ResourceManager');
 
-        $manager->expects($this->any())
+        $manager
             ->method('handle')
-            ->will($this->returnValue($collection));
+            ->willReturn($collection);
 
         return $manager;
     }
 
     protected function getResource($data = null)
     {
-        $resource = $this->getMockBuilder('\Alchemy\Zippy\Adapter\Resource\ResourceInterface')->getMock();
+        $resource = $this->createMock('\Alchemy\Zippy\Adapter\Resource\ResourceInterface');
 
         if (null !== $data) {
-            $resource->expects($this->any())
+            $resource
                 ->method('getResource')
-                ->will($this->returnValue($data));
+                ->willReturn($data);
         }
 
         return $resource;
@@ -60,10 +59,10 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
             $this->fail('Trying to set a probe on an adapter that does not support it');
         }
 
-        $probe = $this->getMockBuilder('\Alchemy\Zippy\Adapter\VersionProbe\VersionProbeInterface')->getMock();
-        $probe->expects($this->any())
+        $probe = $this->createMock('\Alchemy\Zippy\Adapter\VersionProbe\VersionProbeInterface');
+        $probe
             ->method('getStatus')
-            ->will($this->returnValue(VersionProbeInterface::PROBE_OK));
+            ->willReturn(VersionProbeInterface::PROBE_OK);
 
         $adapter->setVersionProbe($probe);
     }
@@ -74,10 +73,10 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
             $this->fail('Trying to set a probe on an adapter that does not support it');
         }
 
-        $probe = $this->getMockBuilder('\Alchemy\Zippy\Adapter\VersionProbe\VersionProbeInterface')->getMock();
-        $probe->expects($this->any())
+        $probe = $this->createMock('\Alchemy\Zippy\Adapter\VersionProbe\VersionProbeInterface');
+        $probe
             ->method('getStatus')
-            ->will($this->returnValue(VersionProbeInterface::PROBE_NOTSUPPORTED));
+            ->willReturn(VersionProbeInterface::PROBE_NOTSUPPORTED);
 
         $adapter->setVersionProbe($probe);
     }
@@ -85,22 +84,19 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
     protected function getMockedProcessBuilderFactory($mockedProcessBuilder, $creations = 1)
     {
         $mockedProcessBuilderFactory =
-            $this->getMockBuilder('\Alchemy\Zippy\ProcessBuilder\ProcessBuilderFactoryInterface')->getMock();
+            $this->createMock('\Alchemy\Zippy\ProcessBuilder\ProcessBuilderFactoryInterface');
 
         $mockedProcessBuilderFactory
             ->expects($this->exactly($creations))
             ->method('create')
-            ->will($this->returnValue($mockedProcessBuilder));
+            ->willReturn($mockedProcessBuilder);
 
         return $mockedProcessBuilderFactory;
     }
 
     protected function getSuccessFullMockProcess($runs = 1)
     {
-        $mockProcess = $this
-            ->getMockBuilder('\Symfony\Component\Process\Process')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mockProcess = $this->createMock('\Symfony\Component\Process\Process');
 
         $mockProcess
             ->expects($this->exactly($runs))
@@ -109,7 +105,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
         $mockProcess
             ->expects($this->exactly($runs))
             ->method('isSuccessful')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         return $mockProcess;
     }

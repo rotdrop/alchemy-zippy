@@ -1,12 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Alchemy\Zippy\Functional;
 
-class ListArchiveTest extends FunctionalTestCase
+final class ListArchiveTest extends FunctionalTestCase
 {
-    /**
-     * @doesNotPerformAssertions
-     */
+    #[\PHPUnit\Framework\Attributes\DoesNotPerformAssertions]
     public function testOpen()
     {
         $adapter = $this->getAdapter();
@@ -17,9 +17,7 @@ class ListArchiveTest extends FunctionalTestCase
         return $archive;
     }
 
-    /**
-     * @depends testOpen
-     */
+    #[\PHPUnit\Framework\Attributes\Depends('testOpen')]
     public function testList($archive)
     {
         $target = __DIR__ . '/samples/tmp';
@@ -36,12 +34,10 @@ class ListArchiveTest extends FunctionalTestCase
             unset($files2find[array_search($member->getLocation(), $files2find)]);
         }
 
-        $this->assertEquals(array(), $files2find);
+        $this->assertSame(array(), $files2find);
     }
 
-    /**
-     * @depends testOpen
-     */
+    #[\PHPUnit\Framework\Attributes\Depends('testOpen')]
     public function testCount($archive)
     {
         $this->assertCount(3, $archive);

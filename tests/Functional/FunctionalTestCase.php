@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Alchemy\Zippy\Functional;
 
 use Alchemy\Zippy\Adapter\AdapterInterface;

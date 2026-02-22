@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Alchemy\Zippy\Tests\Adapter\Resource;
 
 use Alchemy\Zippy\Tests\TestCase;
 use Alchemy\Zippy\Adapter\Resource\FileResource;
 
-class FileResourceTest extends TestCase
+final class FileResourceTest extends TestCase
 {
     public function testGetResource()
     {

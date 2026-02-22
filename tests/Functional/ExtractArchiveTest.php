@@ -1,14 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Alchemy\Zippy\Functional;
 
 use Symfony\Component\Finder\Finder;
 
-class ExtractArchiveTest extends FunctionalTestCase
+final class ExtractArchiveTest extends FunctionalTestCase
 {
-    /**
-     * @doesNotPerformAssertions
-     */
+    #[\PHPUnit\Framework\Attributes\DoesNotPerformAssertions]
     public function testOpen()
     {
         $adapter = $this->getAdapter();
@@ -19,9 +19,7 @@ class ExtractArchiveTest extends FunctionalTestCase
         return $archive;
     }
 
-    /**
-     * @depends testOpen
-     */
+    #[\PHPUnit\Framework\Attributes\Depends('testOpen')]
     public function testExtract($archive)
     {
         $target = __DIR__ . '/samples/tmp';
@@ -38,18 +36,16 @@ class ExtractArchiveTest extends FunctionalTestCase
         );
 
         foreach ($finder as $file) {
-            $this->assertEquals(0, strpos($file->getPathname(), $target));
+            $this->assertSame(0, strpos($file->getPathname(), $target));
             $member = substr($file->getPathname(), strlen($target));
-            $this->assertTrue(in_array($member, $files2find));
+            $this->assertContains($member, $files2find);
             unset($files2find[array_search($member, $files2find)]);
         }
 
-        $this->assertEquals(array(), $files2find);
+        $this->assertSame(array(), $files2find);
     }
 
-    /**
-     * @depends testOpen
-     */
+    #[\PHPUnit\Framework\Attributes\Depends('testOpen')]
     public function testExtractOnExistingFilesCanOverwrite($archive)
     {
         $random = (string) uniqid(mt_rand(), true);
@@ -75,13 +71,13 @@ class ExtractArchiveTest extends FunctionalTestCase
             ->in($target);
 
         foreach ($finder as $file) {
-            $this->assertEquals(0, strpos($file->getPathname(), $target));
-            $this->assertNotEquals($random, file_get_contents($file->getPathname()));
+            $this->assertSame(0, strpos($file->getPathname(), $target));
+            $this->assertNotSame($random, file_get_contents($file->getPathname()));
             $member = substr($file->getPathname(), strlen($target));
-            $this->assertTrue(in_array($member, $files2find));
+            $this->assertContains($member, $files2find);
             unset($files2find[array_search($member, $files2find)]);
         }
 
-        $this->assertEquals(array(), $files2find);
+        $this->assertSame(array(), $files2find);
     }
 }

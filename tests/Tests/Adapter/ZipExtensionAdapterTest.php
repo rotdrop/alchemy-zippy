@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Alchemy\Zippy\Tests\Adapter;
 
 use Alchemy\Zippy\Adapter\ZipExtensionAdapter;
 use Alchemy\Zippy\Adapter\Resource\ZipArchiveResource;
 use Alchemy\Zippy\Exception\RuntimeException;
 
-class ZipExtensionAdapterTest extends AdapterTestCase
+final class ZipExtensionAdapterTest extends AdapterTestCase
 {
     /**
      * @var ZipExtensionAdapter
@@ -65,7 +67,7 @@ class ZipExtensionAdapterTest extends AdapterTestCase
     {
         $file = __DIR__ . '/zip-file-non-existing.zip';
 
-        self::expectException(RuntimeException::class);
+        $this->expectException(RuntimeException::class);
 
         $this->adapter->open($file);
     }
@@ -86,9 +88,7 @@ class ZipExtensionAdapterTest extends AdapterTestCase
 
     public function testListMembers()
     {
-        $resource = $this->getMockBuilder('\ZipArchive')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resource = $this->createStub('\ZipArchive');
 
         $members = $this->adapter->listMembers(new ZipArchiveResource($resource));
 
@@ -97,14 +97,12 @@ class ZipExtensionAdapterTest extends AdapterTestCase
 
     public function testExtract()
     {
-        $resource = $this->getMockBuilder('\ZipArchive')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resource = $this->createMock('\ZipArchive');
 
         $resource->expects($this->once())
             ->method('extractTo')
-            ->with($this->equalTo(__DIR__), $this->anything())
-            ->will($this->returnValue(true));
+            ->with(__DIR__, $this->anything())
+            ->willReturn(true);
 
         $this->adapter->extract(new ZipArchiveResource($resource), __DIR__);
     }
@@ -114,14 +112,12 @@ class ZipExtensionAdapterTest extends AdapterTestCase
      */
     public function testExtractOnError()
     {
-        $resource = $this->getMockBuilder('\ZipArchive')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resource = $this->createMock('\ZipArchive');
 
         $resource->expects($this->once())
             ->method('extractTo')
-            ->with($this->equalTo(__DIR__), $this->anything())
-            ->will($this->returnValue(false));
+            ->with(__DIR__, $this->anything())
+            ->willReturn(false);
 
         $this->adapter->extract(new ZipArchiveResource($resource), __DIR__);
     }
@@ -131,9 +127,7 @@ class ZipExtensionAdapterTest extends AdapterTestCase
      */
     public function testExtractWithInvalidTarget()
     {
-        $resource = $this->getMockBuilder('\ZipArchive')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resource = $this->createStub('\ZipArchive');
 
         $this->adapter->extract(new ZipArchiveResource($resource), __DIR__ . '/boursin');
     }
@@ -143,18 +137,14 @@ class ZipExtensionAdapterTest extends AdapterTestCase
      */
     public function testExtractWithInvalidTarget2()
     {
-        $resource = $this->getMockBuilder('\ZipArchive')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resource = $this->createStub('\ZipArchive');
 
         $this->adapter->extract(new ZipArchiveResource($resource));
     }
 
     public function testRemove()
     {
-        $resource = $this->getMockBuilder('\ZipArchive')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resource = $this->createMock('\ZipArchive');
 
         $files = array(
             'one-file.jpg',
@@ -163,11 +153,11 @@ class ZipExtensionAdapterTest extends AdapterTestCase
 
         $resource->expects($this->exactly(2))
             ->method('locateName')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $resource->expects($this->exactly(2))
             ->method('deleteName')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $this->adapter->remove(new ZipArchiveResource($resource), $files);
     }
@@ -177,9 +167,7 @@ class ZipExtensionAdapterTest extends AdapterTestCase
      */
     public function testRemoveWithLocateFailing()
     {
-        $resource = $this->getMockBuilder('\ZipArchive')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resource = $this->createMock('\ZipArchive');
 
         $files = array(
             'one-file.jpg'
@@ -187,8 +175,8 @@ class ZipExtensionAdapterTest extends AdapterTestCase
 
         $resource->expects($this->once())
             ->method('locateName')
-            ->with($this->equalTo('one-file.jpg'))
-            ->will($this->returnValue(false));
+            ->with('one-file.jpg')
+            ->willReturn(false);
 
         $this->adapter->remove(new ZipArchiveResource($resource), $files);
     }
@@ -198,9 +186,7 @@ class ZipExtensionAdapterTest extends AdapterTestCase
      */
     public function testRemoveWithDeleteFailing()
     {
-        $resource = $this->getMockBuilder('\ZipArchive')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resource = $this->createMock('\ZipArchive');
 
         $files = array(
             'one-file.jpg'
@@ -208,30 +194,28 @@ class ZipExtensionAdapterTest extends AdapterTestCase
 
         $resource->expects($this->once())
             ->method('locateName')
-            ->with($this->equalTo('one-file.jpg'))
-            ->will($this->returnValue(true));
+            ->with('one-file.jpg')
+            ->willReturn(true);
 
         $resource->expects($this->once())
             ->method('deleteName')
-            ->with($this->equalTo('one-file.jpg'))
-            ->will($this->returnValue(false));
+            ->with('one-file.jpg')
+            ->willReturn(false);
 
         $this->adapter->remove(new ZipArchiveResource($resource), $files);
     }
 
     public function testAdd()
     {
-        $resource = $this->getMockBuilder('\ZipArchive')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resource = $this->createMock('\ZipArchive');
 
         $resource->expects($this->once())
             ->method('addFile')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $resource->expects($this->once())
             ->method('addEmptyDir')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $dir = __DIR__ . '/temp-dir';
         if (!is_dir($dir)) {
@@ -256,13 +240,11 @@ class ZipExtensionAdapterTest extends AdapterTestCase
      */
     public function testAddFailOnFile()
     {
-        $resource = $this->getMockBuilder('\ZipArchive')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resource = $this->createMock('\ZipArchive');
 
         $resource->expects($this->once())
             ->method('addFile')
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $dir = __DIR__ . '/temp-dir';
         if (!is_dir($dir)) {
@@ -285,17 +267,15 @@ class ZipExtensionAdapterTest extends AdapterTestCase
      */
     public function testAddFailOnDir()
     {
-        $resource = $this->getMockBuilder('\ZipArchive')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resource = $this->createMock('\ZipArchive');
 
         $resource->expects($this->once())
             ->method('addFile')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $resource->expects($this->once())
             ->method('addEmptyDir')
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $dir = __DIR__ . '/temp-dir';
         if (!is_dir($dir)) {

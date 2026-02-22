@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Alchemy\Zippy\Tests\FileStrategy;
 
 use Alchemy\Zippy\Adapter\AdapterInterface;
@@ -9,69 +11,59 @@ use Alchemy\Zippy\FileStrategy\FileStrategyInterface;
 
 abstract class FileStrategyTestCase extends TestCase
 {
-    /** @test */
-    public function getFileExtensionShouldReturnAnString()
+    public function testGetFileExtensionShouldReturnAnString()
     {
         $that = $this;
-        $container = $this->getMockBuilder('\Alchemy\Zippy\Adapter\AdapterContainer')->getMock();
+        $container = $this->createMock('\Alchemy\Zippy\Adapter\AdapterContainer');
         $container
-                ->expects($this->any())
                 ->method('offsetGet')
-                ->will($this->returnCallback(function ($offset) use ($that) {
+                ->willReturnCallback(function ($offset) use ($that) {
                     if (array_key_exists('Alchemy\Zippy\Adapter\AdapterInterface', class_implements($offset))) {
                         return $that->getMock('Alchemy\Zippy\Adapter\AdapterInterface');
                     }
 
                     return null;
-                }));
+                });
 
         $extension = $this->getStrategy($container)->getFileExtension();
 
-        $this->assertNotEquals('', trim($extension));
+        $this->assertNotSame('', trim($extension));
         $this->assertInternalType('string', $extension);
     }
 
-    /** @test */
-    public function getAdaptersShouldReturnAnArrayOfAdapter()
+    public function testGetAdaptersShouldReturnAnArrayOfAdapter()
     {
         $that = $this;
-        $container = $this->getMockBuilder('\Alchemy\Zippy\Adapter\AdapterContainer')->getMock();
+        $container = $this->createMock('\Alchemy\Zippy\Adapter\AdapterContainer');
         $container
-                ->expects($this->any())
                 ->method('offsetGet')
-                ->will($this->returnCallback(function ($offset) use ($that) {
+                ->willReturnCallback(function ($offset) use ($that) {
                     if (array_key_exists('Alchemy\Zippy\Adapter\AdapterInterface', class_implements($offset))) {
                         return $that->getMockBuilder('\Alchemy\Zippy\Adapter\AdapterInterface')->getMock();
                     }
 
                     return null;
-                }));
+                });
 
         $adapters = $this->getStrategy($container)->getAdapters();
 
         $this->assertInternalType('array', $adapters);
 
-        foreach ($adapters as $adapter) {
-            $this->assertInstanceOf('Alchemy\\Zippy\\Adapter\\AdapterInterface', $adapter);
-        }
+        $this->assertContainsOnlyInstancesOf('Alchemy\\Zippy\\Adapter\\AdapterInterface', $adapters);
     }
 
-    /** @test */
-    public function getAdaptersShouldReturnAnArrayOfAdapterEvenIfAdapterRaiseAnException()
+    public function testGetAdaptersShouldReturnAnArrayOfAdapterEvenIfAdapterRaiseAnException()
     {
-        $container = $this->getMockBuilder('\Alchemy\Zippy\Adapter\AdapterContainer')->getMock();
+        $container = $this->createMock('\Alchemy\Zippy\Adapter\AdapterContainer');
         $container
-            ->expects($this->any())
             ->method('offsetGet')
-            ->will($this->throwException(new RuntimeException()));
+            ->willThrowException(new RuntimeException());
 
         $adapters = $this->getStrategy($container)->getAdapters();
 
         $this->assertInternalType('array', $adapters);
 
-        foreach ($adapters as $adapter) {
-            $this->assertInstanceOf('Alchemy\\Zippy\\Adapter\\AdapterInterface', $adapter);
-        }
+        $this->assertContainsOnlyInstancesOf('Alchemy\\Zippy\\Adapter\\AdapterInterface', $adapters);
     }
 
     /**

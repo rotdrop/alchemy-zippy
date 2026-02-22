@@ -1,36 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Alchemy\Zippy\Tests\Adapter\VersionProbe;
 
 use Alchemy\Zippy\Tests\TestCase;
 use Alchemy\Zippy\Adapter\VersionProbe\ZipVersionProbe;
 use Alchemy\Zippy\Adapter\VersionProbe\VersionProbeInterface;
 
-class ZipVersionProbeTest extends TestCase
+final class ZipVersionProbeTest extends TestCase
 {
-    /**
-     * @covers Alchemy\Zippy\Adapter\VersionProbe\ZipVersionProbe::getStatus
-     */
     public function testGetStatusIsOk()
     {
-        $mockedProcessBuilderInflator = $this->getMockBuilder('\Alchemy\Zippy\ProcessBuilder\ProcessBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mockedProcessBuilderInflator = $this->createMock('\Alchemy\Zippy\ProcessBuilder\ProcessBuilder');
 
         $mockedProcessBuilderInflator
             ->expects($this->once())
             ->method('add')
-            ->with('-h')
-            ->will($this->returnSelf());
+            ->with('-h')->willReturnSelf();
         $processInflator = $this->getSuccessFullMockProcess();
         $mockedProcessBuilderInflator
             ->expects($this->once())
             ->method('getProcess')
-            ->will($this->returnValue($processInflator));
+            ->willReturn($processInflator);
         $processInflator
             ->expects($this->once())
             ->method('getOutput')
-            ->will($this->returnValue('Copyright (c) 1990-2008 Info-ZIP - Type \'zip "-L"\' for software license.
+            ->willReturn('Copyright (c) 1990-2008 Info-ZIP - Type \'zip "-L"\' for software license.
 Zip 3.0 (July 5th 2008). Usage:
 zip [-options] [-b path] [-t mmddyyyy] [-n suffixes] [zipfile list] [-xi list]
   The default action is to add or replace zipfile entries from list, which
@@ -50,26 +46,23 @@ zip [-options] [-b path] [-t mmddyyyy] [-n suffixes] [zipfile list] [-xi list]
   -T   test zipfile integrity       -X   eXclude eXtra file attributes
   -y   store symbolic links as the link instead of the referenced file
   -e   encrypt                      -n   don\'t compress these suffixes
-  -h2  show more help'));
+  -h2  show more help');
 
-        $mockedProcessBuilderDeflator = $this->getMockBuilder('\Alchemy\Zippy\ProcessBuilder\ProcessBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mockedProcessBuilderDeflator = $this->createMock('\Alchemy\Zippy\ProcessBuilder\ProcessBuilder');
 
         $mockedProcessBuilderDeflator
             ->expects($this->once())
             ->method('add')
-            ->with('-h')
-            ->will($this->returnSelf());
+            ->with('-h')->willReturnSelf();
         $processDeflator = $this->getSuccessFullMockProcess();
         $mockedProcessBuilderDeflator
             ->expects($this->once())
             ->method('getProcess')
-            ->will($this->returnValue($processDeflator));
+            ->willReturn($processDeflator);
         $processDeflator
             ->expects($this->once())
             ->method('getOutput')
-            ->will($this->returnValue('UnZip 5.52 of 28 February 2005, by Info-ZIP.  Maintained by C. Spieler.  Send
+            ->willReturn('UnZip 5.52 of 28 February 2005, by Info-ZIP.  Maintained by C. Spieler.  Send
 bug reports using http://www.info-zip.org/zip-bug.html; see README for details.
 
 Usage: unzip [-Z] [-opts[modifiers]] file[.zip] [list] [-x xlist] [-d exdir]
@@ -91,7 +84,7 @@ modifiers:                                   -q  quiet mode (-qq => quieter)
 Examples (see unzip.txt for more info):
   unzip data1 -x joe   => extract all files except joe from zipfile data1.zip
   unzip -p foo | more  => send contents of foo.zip via pipe into program more
-  unzip -fo foo ReadMe => quietly replace existing ReadMe if archive file newer'));
+  unzip -fo foo ReadMe => quietly replace existing ReadMe if archive file newer');
 
         $probe = new ZipVersionProbe($this->getMockedProcessBuilderFactory($mockedProcessBuilderInflator), $this->getMockedProcessBuilderFactory($mockedProcessBuilderDeflator));
 
@@ -99,48 +92,39 @@ Examples (see unzip.txt for more info):
         // second time is served from cache
         $this->assertEquals(VersionProbeInterface::PROBE_OK, $probe->getStatus());
     }
-    /**
-     * @covers Alchemy\Zippy\Adapter\VersionProbe\ZipVersionProbe::getStatus
-     */
     public function testGetStatusIsNotOk()
     {
-        $mockedProcessBuilderInflator = $this->getMockBuilder('\Alchemy\Zippy\ProcessBuilder\ProcessBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mockedProcessBuilderInflator = $this->createMock('\Alchemy\Zippy\ProcessBuilder\ProcessBuilder');
 
         $mockedProcessBuilderInflator
             ->expects($this->once())
             ->method('add')
-            ->with('-h')
-            ->will($this->returnSelf());
+            ->with('-h')->willReturnSelf();
         $processInflator = $this->getSuccessFullMockProcess();
         $mockedProcessBuilderInflator
             ->expects($this->once())
             ->method('getProcess')
-            ->will($this->returnValue($processInflator));
+            ->willReturn($processInflator);
         $processInflator
             ->expects($this->once())
             ->method('getOutput')
-            ->will($this->returnValue('bsdtar 2.8.3 - libarchive 2.8.3'));
+            ->willReturn('bsdtar 2.8.3 - libarchive 2.8.3');
 
-        $mockedProcessBuilderDeflator = $this->getMockBuilder('\Alchemy\Zippy\ProcessBuilder\ProcessBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mockedProcessBuilderDeflator = $this->createMock('\Alchemy\Zippy\ProcessBuilder\ProcessBuilder');
 
         $mockedProcessBuilderDeflator
             ->expects($this->once())
             ->method('add')
-            ->with('-h')
-            ->will($this->returnSelf());
+            ->with('-h')->willReturnSelf();
         $processDeflator = $this->getSuccessFullMockProcess();
         $mockedProcessBuilderDeflator
             ->expects($this->once())
             ->method('getProcess')
-            ->will($this->returnValue($processDeflator));
+            ->willReturn($processDeflator);
         $processDeflator
             ->expects($this->once())
             ->method('getOutput')
-            ->will($this->returnValue('bsdtar 2.8.3 - libarchive 2.8.3'));
+            ->willReturn('bsdtar 2.8.3 - libarchive 2.8.3');
 
         $probe = new ZipVersionProbe($this->getMockedProcessBuilderFactory($mockedProcessBuilderInflator), $this->getMockedProcessBuilderFactory($mockedProcessBuilderDeflator));
 
