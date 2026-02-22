@@ -15,7 +15,7 @@ final class ZipExtensionAdapterTest extends AdapterTestCase
      */
     private $adapter;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->adapter = $this->provideSupportedAdapter();
     }

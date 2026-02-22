@@ -16,7 +16,7 @@ final class ZipAdapterTest extends AdapterTestCase
      */
     protected $adapter;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::$zipFile = sprintf('%s/%s.zip', self::getResourcesPath(), ZipAdapter::getName());
 
@@ -32,7 +32,7 @@ final class ZipAdapterTest extends AdapterTestCase
         }
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->adapter = $this->provideSupportedAdapter();
     }

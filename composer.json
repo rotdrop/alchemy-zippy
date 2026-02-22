@@ -27,7 +27,8 @@
         "guzzlehttp/guzzle": "^7.10.0",
         "phpunit/phpunit": "^12.5.0",
         "symfony/finder": "^7.0.0",
-        "ext-zip": "*"
+        "ext-zip": "*",
+        "rector/rector": "^2.3"
     },
     "suggest": {
         "ext-zip": "To use the ZipExtensionAdapter",

@@ -16,7 +16,7 @@ abstract class GNUTarAdapterWithOptionsTest extends AdapterTestCase
      */
     protected $adapter;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         $classname = static::getAdapterClassName();
         self::$tarFile = sprintf('%s/%s.tar', self::getResourcesPath(), $classname::getName());
@@ -33,7 +33,7 @@ abstract class GNUTarAdapterWithOptionsTest extends AdapterTestCase
         }
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->adapter = $this->provideSupportedAdapter();
     }
