@@ -188,6 +188,7 @@ abstract class AbstractTarAdapter extends AbstractBinaryAdapter
         }
 
         $process = $builder->getProcess();
+
         $process->run();
 
         if (!$process->isSuccessful()) {
@@ -366,21 +367,22 @@ abstract class AbstractTarAdapter extends AbstractBinaryAdapter
             ->inflator
             ->create();
 
-        if ($overwrite == false) {
-            $builder->add('-k');
-        }
-
         $builder
             ->add('--extract')
             ->add(sprintf('--file=%s', $resource->getResource()));
 
-        foreach ($this->getExtractMembersOptions() as $option) {
+        $allOptions = array_merge($this->getExtractMembersOptions(), (array) $options);
+
+        foreach ($allOptions as $option) {
+            if ($option == '--overwrite') {
+                $overwrite = true;
+            }
             $builder
                 ->add($option);
         }
 
-        foreach ((array) $options as $option) {
-            $builder->add((string) $option);
+        if ($overwrite == false) {
+            $builder->add('-k');
         }
 
         if (null !== $to) {
