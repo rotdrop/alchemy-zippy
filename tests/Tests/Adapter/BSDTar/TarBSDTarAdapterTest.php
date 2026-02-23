@@ -43,7 +43,8 @@ final class TarBSDTarAdapterTest extends AdapterTestCase
         $inflator = $this->getMockBuilder('\Alchemy\Zippy\ProcessBuilder\ProcessBuilderFactory')
                 ->disableOriginalConstructor()
                 ->onlyMethods(array('useBinary'))
-                ->getMock();
+            ->getMock();
+        $inflator->expects($this->never())->method('useBinary');
 
         $outputParser = ParserFactory::create(TarBSDTarAdapter::getName());
 
@@ -72,32 +73,18 @@ final class TarBSDTarAdapterTest extends AdapterTestCase
     {
         $mockedProcessBuilder = $this->createMock('\Alchemy\Zippy\ProcessBuilder\ProcessBuilder');
 
-        $mockedProcessBuilder
-            ->expects($this->never())
-            ->method('add')
-            ->with('-c')->willReturnSelf();
-
-        $mockedProcessBuilder
-            ->expects($this->once())
-            ->method('add')
-            ->with('-f')->willReturnSelf();
-
-        $mockedProcessBuilder
-            ->expects($this->exactly(2))
-            ->method('add')
-            ->with($this->getExpectedAbsolutePathForTarget(self::$tarFile))->willReturnSelf();
-
         $nullFile = defined('PHP_WINDOWS_VERSION_BUILD') ? 'NUL' : '/dev/null';
 
         $mockedProcessBuilder
-            ->expects($this->exactly(3))
+            ->expects($this->exactly(5))
             ->method('add')
-            ->with('-T')->willReturnSelf();
-
-        $mockedProcessBuilder
-            ->expects($this->exactly(4))
-            ->method('add')
-            ->with($nullFile)->willReturnSelf();
+            ->willReturnMap([
+              ['-c', $mockedProcessBuilder],
+              ['-f', $mockedProcessBuilder],
+              [$this->getExpectedAbsolutePathForTarget(self::$tarFile), $mockedProcessBuilder],
+              ['-T', $mockedProcessBuilder],
+              [$nullFile, $mockedProcessBuilder],
+            ]);
 
         $mockedProcessBuilder
             ->expects($this->once())
@@ -116,23 +103,17 @@ final class TarBSDTarAdapterTest extends AdapterTestCase
         $mockedProcessBuilder = $this->createMock('\Alchemy\Zippy\ProcessBuilder\ProcessBuilder');
 
         $mockedProcessBuilder
-            ->expects($this->never())
+            ->expects($this->exactly(3))
             ->method('add')
-            ->with('-c')->willReturnSelf();
+            ->willReturnMap([
+                ['-c', $mockedProcessBuilder],
+                [sprintf('--file=%s', $this->getExpectedAbsolutePathForTarget(self::$tarFile)), $mockedProcessBuilder],
+                ['lalalalala', $mockedProcessBuilder],
+            ]);
 
         $mockedProcessBuilder
             ->expects($this->once())
-            ->method('add')
-            ->with(sprintf('--file=%s', $this->getExpectedAbsolutePathForTarget(self::$tarFile)))->willReturnSelf();
-
-        $mockedProcessBuilder
-            ->expects($this->exactly(2))
             ->method('setWorkingDirectory')->willReturnSelf();
-
-        $mockedProcessBuilder
-            ->expects($this->exactly(3))
-            ->method('add')
-            ->with('lalalalala')->willReturnSelf();
 
         $mockedProcessBuilder
             ->expects($this->once())
@@ -162,19 +143,13 @@ final class TarBSDTarAdapterTest extends AdapterTestCase
         $mockedProcessBuilder = $this->createMock('\Alchemy\Zippy\ProcessBuilder\ProcessBuilder');
 
         $mockedProcessBuilder
-            ->expects($this->never())
+            ->expects($this->exactly(3))
             ->method('add')
-            ->with('--list')->willReturnSelf();
-
-        $mockedProcessBuilder
-            ->expects($this->once())
-            ->method('add')
-            ->with('-v')->willReturnSelf();
-
-        $mockedProcessBuilder
-            ->expects($this->exactly(2))
-            ->method('add')
-            ->with(sprintf('--file=%s', $resource->getResource()))->willReturnSelf();
+            ->willReturnMap([
+                ['--list', $mockedProcessBuilder],
+                ['-v', $mockedProcessBuilder],
+                [sprintf('--file=%s', $resource->getResource()), $mockedProcessBuilder],
+            ]);
 
         $mockedProcessBuilder
             ->expects($this->once())
@@ -193,14 +168,12 @@ final class TarBSDTarAdapterTest extends AdapterTestCase
         $mockedProcessBuilder = $this->createMock('\Alchemy\Zippy\ProcessBuilder\ProcessBuilder');
 
         $mockedProcessBuilder
-            ->expects($this->never())
+            ->expects($this->exactly(2))
             ->method('add')
-            ->with('--append')->willReturnSelf();
-
-        $mockedProcessBuilder
-            ->expects($this->once())
-            ->method('add')
-            ->with(sprintf('--file=%s', $resource->getResource()))->willReturnSelf();
+            ->willReturnMap([
+                ['--append', $mockedProcessBuilder],
+                [sprintf('--file=%s', $resource->getResource()), $mockedProcessBuilder],
+            ]);
 
         $mockedProcessBuilder
             ->expects($this->once())
@@ -217,7 +190,7 @@ final class TarBSDTarAdapterTest extends AdapterTestCase
         $mockedProcessBuilder = $this->createMock('\Alchemy\Zippy\ProcessBuilder\ProcessBuilder');
 
         $mockedProcessBuilder
-            ->expects($this->never())
+            ->expects($this->once())
             ->method('add')
             ->with('--version')->willReturnSelf();
 
@@ -238,14 +211,12 @@ final class TarBSDTarAdapterTest extends AdapterTestCase
         $mockedProcessBuilder = $this->createMock('\Alchemy\Zippy\ProcessBuilder\ProcessBuilder');
 
         $mockedProcessBuilder
-            ->expects($this->never())
+            ->expects($this->exactly(2))
             ->method('add')
-            ->with('--extract')->willReturnSelf();
-
-        $mockedProcessBuilder
-            ->expects($this->once())
-            ->method('add')
-            ->with(sprintf('--file=%s', $resource->getResource()))->willReturnSelf();
+            ->willReturnMap([
+                ['--extract', $mockedProcessBuilder],
+                [sprintf('--file=%s', $resource->getResource()), $mockedProcessBuilder],
+            ]);
 
         $mockedProcessBuilder
             ->expects($this->once())
@@ -266,34 +237,16 @@ final class TarBSDTarAdapterTest extends AdapterTestCase
         $mockedProcessBuilder = $this->createMock('\Alchemy\Zippy\ProcessBuilder\ProcessBuilder');
 
         $mockedProcessBuilder
-            ->expects($this->never())
+            ->expects($this->exactly(6))
             ->method('add')
-            ->with('-k')->willReturnSelf();
-
-        $mockedProcessBuilder
-            ->expects($this->once())
-            ->method('add')
-            ->with('--extract')->willReturnSelf();
-
-        $mockedProcessBuilder
-            ->expects($this->exactly(2))
-            ->method('add')
-            ->with('--file=' . $resource->getResource())->willReturnSelf();
-
-        $mockedProcessBuilder
-            ->expects($this->exactly(3))
-            ->method('add')
-            ->with('--directory')->willReturnSelf();
-
-        $mockedProcessBuilder
-            ->expects($this->exactly(4))
-            ->method('add')
-            ->with(__DIR__)->willReturnSelf();
-
-        $mockedProcessBuilder
-            ->expects($this->exactly(5))
-            ->method('add')
-            ->with(__FILE__)->willReturnSelf();
+            ->willReturnMap([
+                ['-k', $mockedProcessBuilder],
+                ['--extract', $mockedProcessBuilder],
+                ['--file=' . $resource->getResource(), $mockedProcessBuilder],
+                ['--directory', $mockedProcessBuilder],
+                [__DIR__, $mockedProcessBuilder],
+                [__FILE__, $mockedProcessBuilder],
+            ]);
 
         $mockedProcessBuilder
             ->expects($this->once())
@@ -312,31 +265,21 @@ final class TarBSDTarAdapterTest extends AdapterTestCase
         $mockedProcessBuilder = $this->createMock('\Alchemy\Zippy\ProcessBuilder\ProcessBuilder');
 
         $mockedProcessBuilder
-            ->expects($this->never())
+            ->expects($this->exactly(4))
             ->method('add')
-            ->with('--delete')->willReturnSelf();
-
-        $mockedProcessBuilder
-            ->expects($this->once())
-            ->method('add')
-            ->with('--file=' . $resource->getResource())->willReturnSelf();
-
-        $mockedProcessBuilder
-            ->expects($this->exactly(2))
-            ->method('add')
-            ->with(__DIR__ . '/../TestCase.php')->willReturnSelf();
-
-        $mockedProcessBuilder
-            ->expects($this->exactly(3))
-            ->method('add')
-            ->with('path-to-file')->willReturnSelf();
+            ->willReturnMap([
+                ['--delete', $mockedProcessBuilder],
+                ['--file=' . $resource->getResource(), $mockedProcessBuilder],
+                [__DIR__ . '/../TestCase.php', $mockedProcessBuilder],
+                ['path-to-file', $mockedProcessBuilder],
+            ]);
 
         $mockedProcessBuilder
             ->expects($this->once())
             ->method('getProcess')
             ->willReturn($this->getSuccessFullMockProcess());
 
-        $archiveFileMock = $this->createMock('\Alchemy\Zippy\Archive\MemberInterface');
+        $archiveFileMock = $this->createStub('\Alchemy\Zippy\Archive\MemberInterface');
 
         $archiveFileMock
             ->method('getLocation')

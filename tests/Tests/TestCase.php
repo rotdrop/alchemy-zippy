@@ -31,7 +31,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 
         $collection = new ResourceCollection($context, $elements, false);
 
-        $manager = $this->createMock('\Alchemy\Zippy\Resource\ResourceManager');
+        $manager = $this->createStub('\Alchemy\Zippy\Resource\ResourceManager');
 
         $manager
             ->method('handle')
@@ -42,7 +42,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 
     protected function getResource($data = null)
     {
-        $resource = $this->createMock('\Alchemy\Zippy\Adapter\Resource\ResourceInterface');
+        $resource = $this->createStub('\Alchemy\Zippy\Adapter\Resource\ResourceInterface');
 
         if (null !== $data) {
             $resource
@@ -59,7 +59,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
             $this->fail('Trying to set a probe on an adapter that does not support it');
         }
 
-        $probe = $this->createMock('\Alchemy\Zippy\Adapter\VersionProbe\VersionProbeInterface');
+        $probe = $this->createStub('\Alchemy\Zippy\Adapter\VersionProbe\VersionProbeInterface');
         $probe
             ->method('getStatus')
             ->willReturn(VersionProbeInterface::PROBE_OK);
@@ -73,7 +73,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
             $this->fail('Trying to set a probe on an adapter that does not support it');
         }
 
-        $probe = $this->createMock('\Alchemy\Zippy\Adapter\VersionProbe\VersionProbeInterface');
+        $probe = $this->createStub('\Alchemy\Zippy\Adapter\VersionProbe\VersionProbeInterface');
         $probe
             ->method('getStatus')
             ->willReturn(VersionProbeInterface::PROBE_NOTSUPPORTED);

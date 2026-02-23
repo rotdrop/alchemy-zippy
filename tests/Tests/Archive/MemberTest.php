@@ -14,7 +14,7 @@ final class MemberTest extends TestCase
     {
         $member = new Member(
             $this->getResource('archive/located/here'),
-             $this->createStub('\Alchemy\Zippy\Adapter\AdapterInterface'),
+            $this->createStub('\Alchemy\Zippy\Adapter\AdapterInterface'),
             'location',
             1233456,
             new \DateTime("2012-07-08 11:14:15"),
@@ -58,7 +58,7 @@ final class MemberTest extends TestCase
 
     public function testExtract()
     {
-        $mockAdapter =  $this->createMock('\Alchemy\Zippy\Adapter\AdapterInterface');
+        $mockAdapter =  $this->createStub('\Alchemy\Zippy\Adapter\AdapterInterface');
 
         $mockAdapter
             ->method('extractMembers');
@@ -81,7 +81,7 @@ final class MemberTest extends TestCase
 
     public function testRelativeExtract()
     {
-        $mockAdapter =  $this->createMock('\Alchemy\Zippy\Adapter\AdapterInterface');
+        $mockAdapter =  $this->createStub('\Alchemy\Zippy\Adapter\AdapterInterface');
 
         $mockAdapter
             ->method('extractMembers');

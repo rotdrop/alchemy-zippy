@@ -48,7 +48,7 @@ final class ExtractArchiveTest extends FunctionalTestCase
     #[\PHPUnit\Framework\Attributes\Depends('testOpen')]
     public function testExtractOnExistingFilesCanOverwrite($archive)
     {
-        $random = (string) uniqid(mt_rand(), true);
+      $random = (string) uniqid((string)mt_rand(), true);
         $target = __DIR__ . '/samples/tmp';
 
         $files2find = array(

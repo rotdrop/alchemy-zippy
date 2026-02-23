@@ -12,7 +12,7 @@ final class ArchiveTest extends TestCase
 {
     public function testNewInstance(): \Alchemy\Zippy\Archive\Archive
     {
-        $archive = new Archive($this->getResource('location'), $this->getAdapterMock(), $this->getResourceManagerMock());
+        $archive = new Archive($this->getResource('location'), $this->getAdapterMock(true), $this->getResourceManagerMock());
 
         $this->assertInstanceOf(\Alchemy\Zippy\Archive\ArchiveInterface::class, $archive);
 
@@ -84,8 +84,10 @@ final class ArchiveTest extends TestCase
         $this->assertEquals($archive, $archive->removeMembers('hello'));
     }
 
-    private function getAdapterMock()
+    private function getAdapterMock(bool $stub = false)
     {
-        return $this->createMock('\Alchemy\Zippy\Adapter\AdapterInterface');
+        return $stub
+            ? $this->createStub('\Alchemy\Zippy\Adapter\AdapterInterface')
+            : $this->createMock('\Alchemy\Zippy\Adapter\AdapterInterface');
     }
 }

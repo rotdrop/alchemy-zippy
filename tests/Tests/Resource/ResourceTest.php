@@ -26,7 +26,7 @@ final class ResourceTest extends TestCase
         $resource = new Resource($original, $target);
         $result = $resource->canBeProcessedInPlace($context);
 
-        $this->assertInternalType('boolean', $result);
+        $this->assertIsBool($result);
         $this->assertEquals($expected, $result);
     }
 

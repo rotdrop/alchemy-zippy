@@ -11,6 +11,8 @@ use Alchemy\Zippy\FileStrategy\FileStrategyInterface;
 
 abstract class FileStrategyTestCase extends TestCase
 {
+    use AbstractFileStrategyTrait;
+
     public function testGetFileExtensionShouldReturnAnString()
     {
         $that = $this;
@@ -28,7 +30,7 @@ abstract class FileStrategyTestCase extends TestCase
         $extension = $this->getStrategy($container)->getFileExtension();
 
         $this->assertNotSame('', trim($extension));
-        $this->assertInternalType('string', $extension);
+        $this->assertIsString($extension);
     }
 
     public function testGetAdaptersShouldReturnAnArrayOfAdapter()
@@ -47,7 +49,7 @@ abstract class FileStrategyTestCase extends TestCase
 
         $adapters = $this->getStrategy($container)->getAdapters();
 
-        $this->assertInternalType('array', $adapters);
+        $this->assertIsArray($adapters);
 
         $this->assertContainsOnlyInstancesOf('Alchemy\\Zippy\\Adapter\\AdapterInterface', $adapters);
     }
@@ -61,7 +63,7 @@ abstract class FileStrategyTestCase extends TestCase
 
         $adapters = $this->getStrategy($container)->getAdapters();
 
-        $this->assertInternalType('array', $adapters);
+        $this->assertIsArray($adapters);
 
         $this->assertContainsOnlyInstancesOf('Alchemy\\Zippy\\Adapter\\AdapterInterface', $adapters);
     }

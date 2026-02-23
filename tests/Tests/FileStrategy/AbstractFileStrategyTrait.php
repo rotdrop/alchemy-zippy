@@ -4,20 +4,24 @@ declare(strict_types=1);
 
 namespace Alchemy\Zippy\Tests\FileStrategy;
 
+use InvalidArgumentException;
+
 use Alchemy\Zippy\Adapter\AdapterContainer;
 use Alchemy\Zippy\Tests\TestCase;
 use Alchemy\Zippy\Exception\RuntimeException;
 
-final class AbstractFileStrategyTest extends TestCase
+trait AbstractFileStrategyTrait
 {
-    /**
-     * @expectedException   \InvalidArgumentException
-     */
     public function testGetAdaptersWithNoDefinedServices()
     {
+        $this->expectException(InvalidArgumentException::class);
+
         $container = AdapterContainer::load();
 
-        $stub = $this->getMockForAbstractClass('Alchemy\Zippy\FileStrategy\AbstractFileStrategy', array($container));
+        $stub = $this->getMockBuilder(static::STRATEGY_CLASS)
+          ->setConstructorArgs(array($container))
+          ->onlyMethods(['getServiceNames'])
+          ->getMock();
         $stub
             ->method('getServiceNames')
             ->willReturn(array(
@@ -26,7 +30,7 @@ final class AbstractFileStrategyTest extends TestCase
 
 
         $adapters = $stub->getAdapters();
-        $this->assertInternalType('array', $adapters);
+        $this->assertIsArray($adapters);
         $this->assertCount(0, $adapters);
     }
 
@@ -34,7 +38,10 @@ final class AbstractFileStrategyTest extends TestCase
     {
         $container = AdapterContainer::load();
 
-        $stub = $this->getMockForAbstractClass('Alchemy\Zippy\FileStrategy\AbstractFileStrategy', array($container));
+        $stub = $this->getMockBuilder(static::STRATEGY_CLASS)
+          ->setConstructorArgs(array($container))
+          ->onlyMethods(['getServiceNames'])
+          ->getMock();
         $stub
             ->method('getServiceNames')
             ->willReturn(array(
@@ -43,7 +50,7 @@ final class AbstractFileStrategyTest extends TestCase
             ));
 
         $adapters = $stub->getAdapters();
-        $this->assertInternalType('array', $adapters);
+        $this->assertIsArray($adapters);
         $this->assertCount(2, $adapters);
         $this->assertContainsOnlyInstancesOf('Alchemy\\Zippy\\Adapter\\AdapterInterface', $adapters);
     }
@@ -53,18 +60,23 @@ final class AbstractFileStrategyTest extends TestCase
         $adapterMock = $this->createStub('\Alchemy\Zippy\Adapter\AdapterInterface');
         $container = $this->createMock('\Alchemy\Zippy\Adapter\AdapterContainer');
         $container
-            ->expects($this->never())
+            ->expects($this->exactly(2))
             ->method('offsetGet')
-            ->with('Alchemy\\Zippy\\Adapter\\ZipAdapter')
-            ->willReturn($adapterMock);
+            ->willReturnCallback(
+                function(string $class) use ($adapterMock) {
+                    switch ($class) {
+                        case 'Alchemy\\Zippy\\Adapter\\ZipAdapter':
+                            return $adapterMock;
+                        case 'Alchemy\\Zippy\\Adapter\\ZipExtensionAdapter':
+                            throw new RuntimeException();
+                    }
+                }
+            );
 
-        $container
-            ->expects($this->once())
-            ->method('offsetGet')
-            ->with('Alchemy\\Zippy\\Adapter\\ZipExtensionAdapter')
-            ->willThrowException(new RuntimeException());
-
-        $stub = $this->getMockForAbstractClass('Alchemy\Zippy\FileStrategy\AbstractFileStrategy', array($container));
+        $stub = $this->getMockBuilder(static::STRATEGY_CLASS)
+          ->setConstructorArgs(array($container))
+          ->onlyMethods(['getServiceNames'])
+          ->getMock();
         $stub
             ->method('getServiceNames')
             ->willReturn(array(
@@ -73,10 +85,10 @@ final class AbstractFileStrategyTest extends TestCase
             ));
 
         $adapters = $stub->getAdapters();
-        $this->assertInternalType('array', $adapters);
+        $this->assertIsArray($adapters);
         $this->assertCount(1, $adapters);
         foreach ($adapters as $adapter) {
             $this->assertSame($adapterMock, $adapter);
         }
-    }   
+    }
 }

@@ -43,11 +43,9 @@ final class ZipExtensionAdapterTest extends AdapterTestCase
         return $adapter;
     }
 
-    /**
-     * @expectedException \Alchemy\Zippy\Exception\NotSupportedException
-     */
     public function testCreateNoFiles()
     {
+        $this->expectException(\Alchemy\Zippy\Exception\NotSupportedException::class);
         $this->adapter->create(__DIR__ . '/zip-file.zip', array());
     }
 
@@ -83,7 +81,7 @@ final class ZipExtensionAdapterTest extends AdapterTestCase
 
     public function testGetName()
     {
-        $this->assertInternalType('string', $this->adapter->getName());
+        $this->assertIsString($this->adapter->getName());
     }
 
     public function testListMembers()
@@ -92,7 +90,7 @@ final class ZipExtensionAdapterTest extends AdapterTestCase
 
         $members = $this->adapter->listMembers(new ZipArchiveResource($resource));
 
-        $this->assertInternalType('array', $members);
+        $this->assertIsArray($members);
     }
 
     public function testExtract()
@@ -107,11 +105,9 @@ final class ZipExtensionAdapterTest extends AdapterTestCase
         $this->adapter->extract(new ZipArchiveResource($resource), __DIR__);
     }
 
-    /**
-     * @expectedException \Alchemy\Zippy\Exception\InvalidArgumentException
-     */
     public function testExtractOnError()
     {
+        $this->expectException(\Alchemy\Zippy\Exception\InvalidArgumentException::class);
         $resource = $this->createMock('\ZipArchive');
 
         $resource->expects($this->once())
@@ -122,21 +118,19 @@ final class ZipExtensionAdapterTest extends AdapterTestCase
         $this->adapter->extract(new ZipArchiveResource($resource), __DIR__);
     }
 
-    /**
-     * @expectedException \Alchemy\Zippy\Exception\InvalidArgumentException
-     */
     public function testExtractWithInvalidTarget()
     {
+        $this->expectException(\Alchemy\Zippy\Exception\InvalidArgumentException::class);
+
         $resource = $this->createStub('\ZipArchive');
 
         $this->adapter->extract(new ZipArchiveResource($resource), __DIR__ . '/boursin');
     }
 
-    /**
-     * @expectedException \Alchemy\Zippy\Exception\InvalidArgumentException
-     */
     public function testExtractWithInvalidTarget2()
     {
+        $this->expectException(\Alchemy\Zippy\Exception\InvalidArgumentException::class);
+
         $resource = $this->createStub('\ZipArchive');
 
         $this->adapter->extract(new ZipArchiveResource($resource));
@@ -153,7 +147,7 @@ final class ZipExtensionAdapterTest extends AdapterTestCase
 
         $resource->expects($this->exactly(2))
             ->method('locateName')
-            ->willReturn(true);
+            ->willReturn(0);
 
         $resource->expects($this->exactly(2))
             ->method('deleteName')
@@ -162,11 +156,10 @@ final class ZipExtensionAdapterTest extends AdapterTestCase
         $this->adapter->remove(new ZipArchiveResource($resource), $files);
     }
 
-    /**
-     * @expectedException \Alchemy\Zippy\Exception\InvalidArgumentException
-     */
     public function testRemoveWithLocateFailing()
     {
+        $this->expectException(\Alchemy\Zippy\Exception\InvalidArgumentException::class);
+
         $resource = $this->createMock('\ZipArchive');
 
         $files = array(
@@ -181,11 +174,10 @@ final class ZipExtensionAdapterTest extends AdapterTestCase
         $this->adapter->remove(new ZipArchiveResource($resource), $files);
     }
 
-    /**
-     * @expectedException RuntimeException
-     */
     public function testRemoveWithDeleteFailing()
     {
+        $this->expectException(RuntimeException::class);
+
         $resource = $this->createMock('\ZipArchive');
 
         $files = array(
@@ -195,7 +187,7 @@ final class ZipExtensionAdapterTest extends AdapterTestCase
         $resource->expects($this->once())
             ->method('locateName')
             ->with('one-file.jpg')
-            ->willReturn(true);
+            ->willReturn(0);
 
         $resource->expects($this->once())
             ->method('deleteName')
@@ -235,11 +227,10 @@ final class ZipExtensionAdapterTest extends AdapterTestCase
         rmdir($dir);
     }
 
-    /**
-     * @expectedException RuntimeException
-     */
     public function testAddFailOnFile()
     {
+        $this->expectException(RuntimeException::class);
+
         $resource = $this->createMock('\ZipArchive');
 
         $resource->expects($this->once())
@@ -262,11 +253,10 @@ final class ZipExtensionAdapterTest extends AdapterTestCase
         $this->adapter->add(new ZipArchiveResource($resource), $files);
     }
 
-    /**
-     * @expectedException RuntimeException
-     */
     public function testAddFailOnDir()
     {
+        $this->expectException(RuntimeException::class);
+
         $resource = $this->createMock('\ZipArchive');
 
         $resource->expects($this->once())
