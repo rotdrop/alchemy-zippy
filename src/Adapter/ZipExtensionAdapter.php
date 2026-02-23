@@ -229,6 +229,10 @@ class ZipExtensionAdapter extends AbstractAdapter
     private function getResource($path, $mode)
     {
         $zip = new \ZipArchive();
+        // cope with "ZipArchive::open(): Using empty file as ZipArchive is deprecated"
+        if (file_exists($path) && filesize($path) == 0) {
+            $mode |= \ZipArchive::OVERWRITE;
+        }
         $res = $zip->open($path, $mode);
 
         if ($res !== true) {
