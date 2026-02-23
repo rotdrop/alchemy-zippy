@@ -46,7 +46,7 @@ class ProcessBuilder implements ProcessBuilderInterface
      */
     public function getProcess()
     {
-        $process =  new Process($this->command, $this->cwd);
+        $process =  new Process($this->command, $this->cwd, ['LC_ALL' => 'C']);
         $process->setTimeout(null);
 
         return $process;

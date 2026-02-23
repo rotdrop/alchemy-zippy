@@ -22,7 +22,7 @@ class GuzzleReader implements ResourceReader
      * @param ZippyResource   $resource
      * @param ClientInterface $client
      */
-    public function __construct(ZippyResource $resource, ClientInterface $client = null)
+    public function __construct(ZippyResource $resource, ?ClientInterface $client = null)
     {
         $this->resource = $resource;
         $this->client = $client;

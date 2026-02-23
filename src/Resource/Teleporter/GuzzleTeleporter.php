@@ -27,7 +27,7 @@ class GuzzleTeleporter extends GenericTeleporter
      * @param ResourceReaderFactory $readerFactory
      * @param ResourceLocator $resourceLocator
      */
-    public function __construct(ResourceReaderFactory $readerFactory = null, ResourceLocator $resourceLocator = null)
+    public function __construct(?ResourceReaderFactory $readerFactory = null, ?ResourceLocator $resourceLocator = null)
     {
         parent::__construct($readerFactory ?: new GuzzleReaderFactory(), new FilesystemWriter(), $resourceLocator);
     }

@@ -15,7 +15,7 @@ class GuzzleReaderFactory implements ResourceReaderFactory
      */
     private $client = null;
 
-    public function __construct(ClientInterface $client = null)
+    public function __construct(?ClientInterface $client = null)
     {
         $this->client = $client;
 
