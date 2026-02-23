@@ -26,7 +26,7 @@ final class ResourceCollectionTest extends TestCase
 
     private function createResourceMock()
     {
-        return $this->createMock('\Alchemy\Zippy\Resource\Resource');
+        return $this->createStub('\Alchemy\Zippy\Resource\Resource');
     }
 
     #[\PHPUnit\Framework\Attributes\DataProvider('provideVariousInPlaceResources')]
@@ -52,7 +52,7 @@ final class ResourceCollectionTest extends TestCase
 
     private function getInPlaceResource($processInPlace)
     {
-        $resource = $this->createMock('\Alchemy\Zippy\Resource\Resource');
+        $resource = $this->createStub('\Alchemy\Zippy\Resource\Resource');
 
         $resource
             ->method('canBeProcessedInPlace')

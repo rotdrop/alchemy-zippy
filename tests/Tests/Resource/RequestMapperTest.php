@@ -14,6 +14,7 @@ final class RequestMapperTest extends TestCase
         $locator = $this->createMock('\Alchemy\Zippy\Resource\TargetLocator');
 
         $locator
+            ->expects($this->atLeastOnce())
             ->method('locate')
             ->willReturn('computed-location');
 

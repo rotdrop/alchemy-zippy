@@ -18,7 +18,7 @@ final class ResourceManagerTest extends TestCase
         $manager = new ResourceManager(
             $mapper,
             $this->getResourceTeleporterMock(),
-            $this->getFilesystemMock()
+            $this->getFilesystemMock(true)
         );
 
         $context = '/path/to/current/directory';
@@ -42,7 +42,7 @@ final class ResourceManagerTest extends TestCase
         $manager = new ResourceManager(
             $mapper,
             $this->getResourceTeleporterMock(),
-            $this->getFilesystemMock()
+            $this->getFilesystemMock(true)
         );
 
         $context = '/path/to/current/directory';
@@ -62,7 +62,7 @@ final class ResourceManagerTest extends TestCase
 
     private function createProcessableInPlaceResource()
     {
-        $resource = $this->createMock('\Alchemy\Zippy\Resource\Resource');
+        $resource = $this->createStub('\Alchemy\Zippy\Resource\Resource');
         $resource
             ->method('canBeProcessedInPlace')
             ->willReturn(true);
@@ -72,7 +72,7 @@ final class ResourceManagerTest extends TestCase
 
     private function createNotProcessableInPlaceResource()
     {
-        $resource = $this->createMock('\Alchemy\Zippy\Resource\Resource');
+        $resource = $this->createStub('\Alchemy\Zippy\Resource\Resource');
         $resource
             ->method('canBeProcessedInPlace')
             ->willReturn(false);
@@ -85,7 +85,7 @@ final class ResourceManagerTest extends TestCase
         $fs = $this->getFilesystemMock();
 
         $manager = new ResourceManager(
-            $this->getRequestMapperMock(),
+            $this->getRequestMapperMock(true),
             $this->getResourceTeleporterMock(),
             $fs
         );
@@ -114,7 +114,7 @@ final class ResourceManagerTest extends TestCase
         $fs = $this->getFilesystemMock();
 
         $manager = new ResourceManager(
-            $this->getRequestMapperMock(),
+            $this->getRequestMapperMock(true),
             $this->getResourceTeleporterMock(),
             $fs
         );
@@ -200,18 +200,22 @@ final class ResourceManagerTest extends TestCase
         }
     }
 
-    protected function getRequestMapperMock()
+    protected function getRequestMapperMock(bool $stub = false)
     {
-        return $this->createMock('\Alchemy\Zippy\Resource\RequestMapper');
+      return $stub
+        ? $this->createStub('\Alchemy\Zippy\Resource\RequestMapper')
+        : $this->createMock('\Alchemy\Zippy\Resource\RequestMapper');
     }
 
     protected function getResourceTeleporterMock()
     {
-        return $this->createMock('\Alchemy\Zippy\Resource\ResourceTeleporter');
+        return $this->createStub('\Alchemy\Zippy\Resource\ResourceTeleporter');
     }
 
-    protected function getFilesystemMock()
+    protected function getFilesystemMock(bool $stub = false)
     {
-        return $this->createMock('\Symfony\Component\Filesystem\Filesystem');
+      return $stub
+        ? $this->createStub('\Symfony\Component\Filesystem\Filesystem')
+        : $this->createMock('\Symfony\Component\Filesystem\Filesystem');
     }
 }

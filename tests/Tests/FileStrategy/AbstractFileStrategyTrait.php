@@ -23,6 +23,7 @@ trait AbstractFileStrategyTrait
           ->onlyMethods(['getServiceNames'])
           ->getMock();
         $stub
+            ->expects($this->atLeastOnce())
             ->method('getServiceNames')
             ->willReturn(array(
                 'Unknown\Services'
@@ -39,10 +40,11 @@ trait AbstractFileStrategyTrait
         $container = AdapterContainer::load();
 
         $stub = $this->getMockBuilder(static::STRATEGY_CLASS)
-          ->setConstructorArgs(array($container))
-          ->onlyMethods(['getServiceNames'])
-          ->getMock();
+            ->setConstructorArgs(array($container))
+            ->onlyMethods(['getServiceNames'])
+            ->getMock();
         $stub
+            ->expects($this->atLeastOnce())
             ->method('getServiceNames')
             ->willReturn(array(
                 'Alchemy\\Zippy\\Adapter\\ZipAdapter',
@@ -78,6 +80,7 @@ trait AbstractFileStrategyTrait
           ->onlyMethods(['getServiceNames'])
           ->getMock();
         $stub
+            ->expects($this->atLeastOnce())
             ->method('getServiceNames')
             ->willReturn(array(
                 'Alchemy\\Zippy\\Adapter\\ZipAdapter',

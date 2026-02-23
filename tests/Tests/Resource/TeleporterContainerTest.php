@@ -38,7 +38,7 @@ final class TeleporterContainerTest extends TestCase
 
     private function createResource($data)
     {
-        $resource = $this->createMock('\Alchemy\Zippy\Resource\Resource');
+        $resource = $this->createStub('\Alchemy\Zippy\Resource\Resource');
 
         $resource
             ->method('getOriginal')

@@ -107,7 +107,7 @@ final class ZippyTest extends TestCase
 
     public function testItShouldRegisterStrategies()
     {
-        $adapters = array($this->getSupportedAdapter());
+        $adapters = array($this->getSupportedAdapter(true));
         $strategy = $this->getStrategy('zippo', $adapters);
 
         $zippy = new Zippy($this->getContainer());
@@ -116,12 +116,12 @@ final class ZippyTest extends TestCase
         $this->assertEquals(array('zippo' => array($strategy)), $zippy->getStrategies());
     }
 
-    public function testRegisterTwoStrategiesWithSameExtensionShouldBeinRightOrder()
+    public function testRegisterTwoStrategiesWithSameExtensionShouldBeginRightOrder()
     {
-        $adapters1 = array($this->getSupportedAdapter());
+        $adapters1 = array($this->getSupportedAdapter(true));
         $strategy1 = $this->getStrategy('zippo', $adapters1);
 
-        $adapters2 = array($this->getSupportedAdapter());
+        $adapters2 = array($this->getSupportedAdapter(true));
         $strategy2 = $this->getStrategy('zippo', $adapters2);
 
         $zippy = new Zippy($this->getContainer());
@@ -133,10 +133,10 @@ final class ZippyTest extends TestCase
 
     public function testRegisterAStrategyTwiceShouldMoveItToLastAdded()
     {
-        $adapters1 = array($this->getSupportedAdapter());
+        $adapters1 = array($this->getSupportedAdapter(true));
         $strategy1 = $this->getStrategy('zippo', $adapters1);
 
-        $adapters2 = array($this->getSupportedAdapter());
+        $adapters2 = array($this->getSupportedAdapter(true));
         $strategy2 = $this->getStrategy('zippo', $adapters2);
 
         $zippy = new Zippy($this->getContainer());
@@ -149,7 +149,7 @@ final class ZippyTest extends TestCase
 
     public function testItShouldReturnAnAdapterCorrespondingToTheRightStrategy()
     {
-        $adapters = array($this->getSupportedAdapter());
+        $adapters = array($this->getSupportedAdapter(true));
         $strategy = $this->getStrategy('zippo', $adapters);
 
         $zippy = new Zippy($this->getContainer());
@@ -163,7 +163,7 @@ final class ZippyTest extends TestCase
 
     public function testItShouldThrowAnExceptionIfNoAdapterSupported()
     {
-        $adapters = array($this->getNotSupportedAdapter());
+        $adapters = array($this->getNotSupportedAdapter(true));
         $strategy = $this->getStrategy('zippo', $adapters);
 
         $zippy = new Zippy($this->getContainer());
@@ -177,7 +177,7 @@ final class ZippyTest extends TestCase
 
     public function testItShouldThrowAnExceptionIfFormatNotSupported()
     {
-        $adapters = array($this->getSupportedAdapter());
+        $adapters = array($this->getSupportedAdapter(true));
         $strategy = $this->getStrategy('zippotte', $adapters);
 
         $zippy = new Zippy($this->getContainer());
@@ -206,7 +206,7 @@ final class ZippyTest extends TestCase
 
     private function getStrategy($extension, $adapters)
     {
-        $strategy = $this->createMock('\Alchemy\Zippy\FileStrategy\FileStrategyInterface');
+        $strategy = $this->createStub('\Alchemy\Zippy\FileStrategy\FileStrategyInterface');
 
         $strategy
             ->method('getFileExtension')
@@ -219,9 +219,11 @@ final class ZippyTest extends TestCase
         return $strategy;
     }
 
-    private function getSupportedAdapter()
+    private function getSupportedAdapter(bool $stub = false)
     {
-        $adapter = $this->createMock('\Alchemy\Zippy\Adapter\AdapterInterface');
+        $adapter = $stub
+            ? $this->createStub('\Alchemy\Zippy\Adapter\AdapterInterface')
+            : $this->createMock('\Alchemy\Zippy\Adapter\AdapterInterface');
         $adapter
             ->method('isSupported')
             ->willReturn(true);
@@ -229,9 +231,11 @@ final class ZippyTest extends TestCase
         return $adapter;
     }
 
-    private function getNotSupportedAdapter()
+    private function getNotSupportedAdapter(bool $stub = false)
     {
-        $adapter = $this->createMock('\Alchemy\Zippy\Adapter\AdapterInterface');
+        $adapter = $stub
+            ? $this->createStub('\Alchemy\Zippy\Adapter\AdapterInterface')
+            : $this->createMock('\Alchemy\Zippy\Adapter\AdapterInterface');
         $adapter
             ->method('isSupported')
             ->willReturn(false);
@@ -241,6 +245,6 @@ final class ZippyTest extends TestCase
 
     private function getContainer()
     {
-        return $this->createMock('\Alchemy\Zippy\Adapter\AdapterContainer');
+        return $this->createStub('\Alchemy\Zippy\Adapter\AdapterContainer');
     }
 }
