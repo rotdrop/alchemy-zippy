@@ -1,5 +1,5 @@
 {
-    "name": "alchemy/zippy",
+    "name": "rotdrop/zippy",
     "type": "library",
     "description": "Zippy, the archive manager companion",
     "keywords": ["zip", "tar", "bzip", "compression"],
